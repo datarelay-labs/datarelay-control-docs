@@ -1,28 +1,41 @@
 ---
 title: "현재 상태 & 로드맵"
-description: "계획과 구현을 분리한 현재 상태."
+description: "계획과 구현을 분리한 DataRelay Control 현재 상태."
 ---
 
 # 현재 상태 & 로드맵
 
-## 감사한 개발 브랜치에서 구현됨
+현재 canonical development integration branch는 `main-v2`입니다.
 
-Stream/Route runtime, Route Processing, JWT/RBAC, credential encryption architecture, schema/sensitive control, Protection/Classification/Policy/Quarantine/Replay, Dashboard/runtime evidence, Marketplace package lifecycle/security, Harvester, AI Builder core, Marketplace UI, private/remote registry, offline signed bundle, Data Flow Troubleshooter, Safe Change, Connector/API Health, Test Before Apply, Environment Promotion.
+## 현재 Development Line에 구현된 주요 영역
 
-기준: `feature/post-m29-development` @ `b78aa66eebae`.
+- Stream/Route Runtime과 One Stream → Many Routes → Many Destinations
+- Route Processing
+- Local JWT/RBAC
+- Credential Encryption Architecture
+- Schema Observation/Drift 및 Sensitive Data Control
+- Protection, Classification, Policy, Quarantine, Replay, Audit
+- Dashboard 및 Runtime Evidence
+- Package/Marketplace Lifecycle과 Validation
+- Connector Harvester 및 AI Connector Builder Core
+- Private/Remote Registry와 Signed Offline Bundle
+- Data Flow Troubleshooter
+- Safe Change Management
+- Connector/API Health
+- Test Before Apply
+- Environment Promotion
 
-## 구현되었지만 stable로 확정하지 않음
+## 제한적으로 설명할 영역
 
-Tag로 확인되지 않은 개발 브랜치 전용 기능 전체.
+- External Network AI Provider 사용 가능 여부는 AI Connector Builder Core 구현과 별개입니다.
+- `main-v2`에 기능이 존재한다는 사실만으로 새로운 Immutable Stable Release가 되는 것은 아닙니다.
 
-## 제한적/실험적
+## 현재 제품 범위가 아님
 
-AI Builder의 production external-network provider는 core 구현과 별개이며 자동 제공된다고 가정하지 않습니다. Fluent Bit/Telegraf harvester는 감사 이력에서 fixture/skeleton 수준이 포함됩니다.
-
-## 현재 지원하지 않음
-
-- multi-node HA
-- enterprise IAM/SSO federation
+- Multi-node HA Platform
+- Enterprise IAM/SSO Federation
 - DataRelay Link 중앙 관리 통합
-- arbitrary executable Marketplace plugin
-- AI Gateway / AI Proxy 제품 surface
+- Arbitrary Executable Marketplace Plugin
+- AI Gateway / AI Proxy Product Surface
+
+Roadmap 문구만으로 지원 기능을 주장하지 않습니다. Public Support Claim은 현재 Source, Test, Release Evidence를 따라야 합니다.
