@@ -1,0 +1,26 @@
+engineering_system:
+  version: 1.6.2
+  mode: adopted
+  baseline: d505e2813cfc0d2ac58d063ec3e4eb4828734885
+  ci_mode: shared
+  native_ci_workflows: []
+  merge_gate_status: advisory
+project:
+  name: datarelay-control-docs
+  type: generic
+  maturity: development
+domains:
+- core
+platforms:
+- linux
+operations:
+  production_oriented: false
+  runbook_required: false
+  incident_response_required: false
+  persistent_state: false
+  runbook_paths: []
+  health_command: ''
+  backup_command: ''
+  restore_test_command: ''
+  upgrade_command: ''
+  rollback_command: ''
