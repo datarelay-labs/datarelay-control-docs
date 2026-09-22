@@ -1,19 +1,25 @@
 ---
 title: "릴리스 상태"
-description: "tag로 확인된 stable과 current development를 구분."
+description: "DataRelay Control의 현재 Release Identity와 Immutable Git Evidence."
 ---
 
 # 릴리스 상태
 
-Repository ref 감사에서는 `v1.0.0` tag를 확인했습니다.
+현재 제품 Source의 README와 `CHANGELOG.md`는 Release Line을 **GA v1.0.2**로 표시합니다.
 
-`CHANGELOG.md`는 1.0.1/1.0.2도 기록하고 현재 README는 “GA v1.0.2”라고 표기하지만, 이번 감사에서는 `v1.0.2` Git ref가 확인되지 않았고 GitHub Releases API도 빈 결과였습니다.
+다만 Git Evidence는 별도로 구분해야 합니다.
 
-따라서 이 문서에서는:
-- `v1.0.0`: tag-proven stable
-- 1.0.1/1.0.2: changelog에 기록된 release lineage
-- `feature/post-m29-development` @ `b78aa66eebae`: 현재 감사한 development implementation
+| Track | 현재 증거 |
+|---|---|
+| `v1.0.0` | Immutable Git Tag 존재 |
+| `1.0.1` | `CHANGELOG.md`에 기록되어 있으나 현재 Remote Tag 감사에서 `v1.0.1` Tag 미확인 |
+| `1.0.2` | README가 GA v1.0.2로 표시하고 `CHANGELOG.md`에 기록되어 있으나 현재 Remote Tag 감사에서 `v1.0.2` Tag 미확인 |
+| `main-v2` | 현재 Development Integration Branch. 마지막 Tag-proven Baseline 이후 변경 포함 |
 
-으로 구분합니다.
+현재 GitHub Releases에는 Release Object가 없습니다.
 
-개발 브랜치는 `main-v2`보다 86 commits 앞서 있으며 Marketplace, Safe Change, Troubleshooter, Connector Health, Test Before Apply, Environment Promotion 등 후속 기능이 포함됩니다.
+## 문서 원칙
+
+이 사이트의 제품 동작 설명은 현재 `main-v2` 구현을 따르되, Release Claim은 Source Documented 상태와 Immutable Tag로 증명된 상태를 구분합니다.
+
+Production에서는 실행할 정확한 Tag 또는 Commit을 Pin하십시오. Mutable Branch 이름을 Immutable Release Evidence로 취급하지 마십시오.

@@ -1,18 +1,18 @@
 ---
-title: "Data Relay Link Relationship"
-description: "What is and is not implemented between Data Relay Control and Data Relay Link."
+title: "DataRelay Link Relationship"
+description: "What is and is not implemented between DataRelay Control and DataRelay Link."
 ---
 
-# Data Relay Link Relationship
+# DataRelay Link Relationship
 
-**Data Relay Link** and **Data Relay Control** are separate products in the current audited repositories.
+**DataRelay Link** and **DataRelay Control** are separate products in the current audited repositories.
 
-- Data Relay Link provides connectivity/relay capabilities and has its own documentation at `link.datarelay.run`.
-- Data Relay Control provides data collection, processing, protection, delivery, governance, and operational control.
+- DataRelay Link provides connectivity/relay capabilities and has its own documentation at `link.datarelay.run`.
+- DataRelay Control provides data collection, processing, protection, delivery, governance, and operational control.
 
 ## Current integration status
 
-The audited Data Relay Control source does **not** implement:
+The audited DataRelay Control source does **not** implement:
 
 - Link instance registration
 - Link heartbeat/status synchronization
@@ -26,7 +26,7 @@ Therefore this site does not claim a centralized Control↔Link management plane
 
 ```mermaid
 flowchart LR
-  L[Data Relay Link] -. no implemented management protocol .- C[Data Relay Control]
+  L[DataRelay Link] -. no implemented management protocol .- C[DataRelay Control]
 ```
 
 Both products may exist in the same environment, but any operational relationship must be designed and implemented before it is documented as supported.

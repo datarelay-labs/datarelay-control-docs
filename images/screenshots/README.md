@@ -2,7 +2,7 @@
 
 These assets are placeholders for capture work only and are not authoritative UI evidence.
 
-Current screenshots required from the audited Data Relay Control UI:
+Current screenshots required from the audited DataRelay Control UI:
 
 1. Login / forced first-password change
 2. Dashboard (`/monitoring`)
