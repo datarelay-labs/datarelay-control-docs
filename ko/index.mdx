@@ -1,41 +1,42 @@
 ---
 title: "DataRelay Control"
-description: "엔터프라이즈 데이터 흐름을 수집·변환·보호·전달하고 운영하는 DataRelay Control 문서."
+description: "Enterprise Data 수집, Route Processing, 보호, Governance, Multi-Destination Delivery를 위한 DataRelay Control 문서."
 ---
 
 # DataRelay Control
 
-DataRelay Control은 현재 [`datarelay-labs/datarelay-control`](https://github.com/datarelay-labs/datarelay-control)에 구현된 소프트웨어의 공개 제품명입니다. 현재 코드는 단순 관리 서버가 아니라 **Enterprise Data Control Gateway**로 동작합니다. 데이터를 수집하고, 필요한 처리를 적용한 뒤, 하나 이상의 목적지로 전달합니다.
+DataRelay Control은 [`datarelay-labs/datarelay-control`](https://github.com/datarelay-labs/datarelay-control)에 구현된 Source Available **Enterprise Data Control Gateway**입니다.
 
-<Warning>
-**Free Early Access.** DataRelay Control은 현재 **DataRelay Control Early Access License 1.0**에 따라 무료로 사용할 수 있습니다. Source Available이며 Open Source는 아닙니다. 개인 사용, 평가·테스트, 기업·기관의 자체 내부 사용, 허용된 내부 소스 수정, 고객 소유 환경 배포가 허용됩니다. Early Access에는 SLA가 없으며 기술지원은 Best Effort입니다. 향후 Commercial General Availability에서는 **Perpetual License** 모델을 적용할 계획입니다. 재판매, OEM/화이트라벨, 경쟁 상용 제품, SaaS/MSP/호스팅 제공에는 별도 서면 상용 라이선스가 필요합니다. 자세한 내용은 [라이선스](/ko/reference/license)를 참고하십시오.
-</Warning>
+단순 관리 서버가 아니라 실제 Data Path에 위치합니다. 데이터를 수집하고, 필요한 Transform과 Route별 Protection/Policy를 적용하고, 운영 Evidence를 남긴 뒤 하나 이상의 Destination으로 전달합니다.
+
+> **One Stream → Many Routes → Many Destinations**
 
 <Note>
-이 문서는 `feature/post-m29-development`의 `b78aa66eebae`를 현재 개발 구현 기준으로 감사했습니다. 안정 릴리스와 개발 브랜치 기능은 구분해서 표기합니다.
+현재 제품 Repository README와 CHANGELOG는 release line을 **GA v1.0.2**로 표시합니다. Immutable Git Tag 증거는 [릴리스 상태](/ko/reference/release-status)에서 별도로 구분합니다. 현재 개발 문서는 canonical `main-v2` source를 따르며 development-only behavior와 release-proven behavior를 구분합니다.
 </Note>
 
 ## 핵심 모델
 
-```text
-One Stream → Many Routes → Many Destinations
-```
+Stream은 실행과 Source Progress를 소유하고, Route는 Destination별 Transform·Protection·Classification·Policy·Delivery를 담당합니다.
 
-Stream은 실행과 체크포인트를 소유하고, Route는 목적지별 Transform·Protection·Classification·Policy·Delivery를 담당합니다.
+## 현재 제품 Surface
 
-## 현재 관리 가능한 영역
-
-- 사용자, 역할, 로그인 세션
 - Connector, Credential, Source, Stream, Route, Destination
 - Mapping/Enrichment 기반 Transform
-- 선택적 Protection, Classification, Policy, Quarantine, Replay
-- Dashboard, runtime evidence, audit, backup
-- 개발 브랜치의 Marketplace, Safe Change, Troubleshooter, Environment Promotion
+- Route별 Protection, Classification, Policy, Quarantine, Replay
+- Dashboard, Streams Runtime View, Delivery Evidence, Checkpoint, Audit
+- Local User, Role, JWT Session, RBAC
+- Backup, Restore, Upgrade, Health, Troubleshooting
+- 현재 development line의 Marketplace/Package Lifecycle, Safe Change, Connector/API Health, Test Before Apply, Environment Promotion
 
-## 현재 지원하지 않는 제품 정체성
+## 제품 경계
 
-DataRelay Control은 VPN, 일반 RMM, SASE, SIEM, SOAR, Data Lake, Enterprise IAM 제품이 아닙니다.
+DataRelay Control은 VPN, 일반 RMM, SASE, SIEM, SOAR, Data Lake, Enterprise IAM, Ticketing, AI Agent Platform이 아닙니다.
 
-또한 현재 소스에는 **DataRelay Link 등록·heartbeat·정책 배포·상태 동기화 프로토콜이 없습니다.** 따라서 DataRelay Link의 중앙 관리 서버라고 설명하지 않습니다. 자세한 내용은 [DataRelay Link 관계](/ko/getting-started/data-relay-link)를 참고하십시오.
+또한 **DataRelay Link의 중앙 관리 제품이 아닙니다.** 현재 Control source에는 Link Registration, Heartbeat, Policy Delivery, State Synchronization, 공통 Management Protocol이 구현되어 있지 않습니다. [DataRelay Link 관계](/ko/getting-started/data-relay-link)를 참고하십시오.
 
-라이선스 조건과 허용/금지 예시는 [라이선스](/ko/reference/license)에서 확인할 수 있습니다.
+## 라이선스
+
+DataRelay Control은 **Source Available이며 Open Source가 아닙니다.** 법적 조건은 Repository의 `LICENSE`가 우선합니다. 현재 허용 범위에는 개인 사용, 연구/평가, 기업 내부 상업적 사용, 허용된 내부 수정, 고객 소유 환경 배포가 포함됩니다. Productization, 재판매/OEM, White-label, 경쟁 제품, SaaS/MSP/Hosted 제공에는 별도 서면 상용 라이선스가 필요합니다.
+
+[빠른 시작](/ko/getting-started/quickstart) 이후 [Architecture](/ko/getting-started/architecture), [라이선스](/ko/reference/license), [릴리스 상태](/ko/reference/release-status), [제한 사항](/ko/reference/limitations)을 확인하십시오.
