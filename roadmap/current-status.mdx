@@ -1,45 +1,40 @@
 ---
 title: "Current Status & Roadmap"
-description: "Current implementation status without converting historical plans into supported features."
+description: "Current implementation status without converting plans into supported features."
 ---
 
 # Current Status & Roadmap
 
-This page distinguishes code from plans.
+This page distinguishes implemented behavior from product plans.
 
-## Implemented in the audited development branch
+## Current development line
 
-- core Stream/Route runtime
+The canonical development integration branch is `main-v2`.
+
+Implemented areas include:
+
+- core Stream/Route runtime and One Stream → Many Routes → Many Destinations
 - Route Processing
-- local JWT authentication and central RBAC
+- local JWT authentication and RBAC
 - encrypted credential architecture
 - schema observation/drift and sensitive-data controls
-- protection, classification, policy, quarantine, replay
-- operational Dashboard/runtime evidence
-- package lifecycle, validation, signatures/trusted keys, license/provenance
-- Connector Harvester V1
-- AI Connector Builder core
-- Marketplace UI
-- private/remote registry administration and safe acquisition paths
-- offline signed bundle path
+- Protection, Classification, Policy, Quarantine, Replay, and audit
+- Dashboard and runtime evidence
+- package/Marketplace lifecycle and validation
+- Connector Harvester and AI Connector Builder core
+- private/remote registry administration and signed offline bundle paths
 - Data Flow Troubleshooter
 - Safe Change Management
 - Connector/API Health
 - Test Before Apply
 - Environment Promotion
 
-Audited branch: `feature/post-m29-development` @ `b78aa66eebae`.
+## Bounded / do not overclaim
 
-## Implemented but not treated as stable here
+- External-network AI provider availability is separate from the implemented AI Connector Builder core.
+- Feature presence on `main-v2` does not by itself create a new immutable stable release.
 
-All features that exist only on the audited development branch fall into this category until a tagged/release baseline is proven.
-
-## Experimental / bounded
-
-- AI Connector Builder external-network provider integration is not required by the implemented core and should not be assumed available.
-- Fluent Bit/Telegraf harvester support was fixture/skeleton-oriented in the audited implementation history.
-
-## Planned / not supported
+## Not current product scope
 
 - multi-node HA platform
 - enterprise IAM/SSO federation
@@ -47,4 +42,4 @@ All features that exist only on the audited development branch fall into this ca
 - arbitrary executable Marketplace plugins
 - AI Gateway / AI Proxy product surface
 
-Roadmap text alone is not proof of support. This page is updated only when implementation evidence changes.
+Roadmap text is not implementation evidence. Public support claims should follow current source, tests, and release evidence.
