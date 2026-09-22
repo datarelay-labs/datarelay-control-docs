@@ -1,14 +1,14 @@
 ---
-title: "Data Relay Control"
+title: "DataRelay Control"
 description: "Data delivery, route processing, protection, and operational control for enterprise data flows."
 ---
 
-# Data Relay Control
+# DataRelay Control
 
-Data Relay Control is the public product name for the software currently implemented in [`datarelay-labs/datarelay-control`](https://github.com/datarelay-labs/datarelay-control). It is an **Enterprise Data Control Gateway**: it collects data, transforms it, applies optional protection and policy controls, and delivers it to one or more destinations.
+DataRelay Control is the public product name for the software currently implemented in [`datarelay-labs/datarelay-control`](https://github.com/datarelay-labs/datarelay-control). It is an **Enterprise Data Control Gateway**: it collects data, transforms it, applies optional protection and policy controls, and delivers it to one or more destinations.
 
 <Warning>
-**Free Early Access.** Data Relay Control is currently available free of charge under the **Data Relay Control Early Access License 1.0**. It is Source Available, not Open Source. Personal use, evaluation, internal business use, permitted internal modification, and customer-owned deployments are allowed. Early Access has no SLA and support is best effort. Commercial General Availability is planned with a **Perpetual License** model. Resale, OEM/white-label use, competing commercial products, and SaaS/MSP/hosted offerings require a separate written commercial license. See [License](/reference/license).
+**Free Early Access.** DataRelay Control is currently available free of charge under the **DataRelay Control Early Access License 1.0**. It is Source Available, not Open Source. Personal use, evaluation, internal business use, permitted internal modification, and customer-owned deployments are allowed. Early Access has no SLA and support is best effort. Commercial General Availability is planned with a **Perpetual License** model. Resale, OEM/white-label use, competing commercial products, and SaaS/MSP/hosted offerings require a separate written commercial license. See [License](/reference/license).
 </Warning>
 
 <Note>
@@ -17,7 +17,7 @@ This documentation is implementation-driven. The audited development source is `
 
 ## What it solves
 
-Data Relay Control provides one operational place to configure and observe enterprise data flows without turning every destination into a separate pipeline.
+DataRelay Control provides one operational place to configure and observe enterprise data flows without turning every destination into a separate pipeline.
 
 ```mermaid
 flowchart LR
@@ -44,9 +44,9 @@ The runtime model is **One Stream → Many Routes → Many Destinations**. A Str
 
 ## What it intentionally is not
 
-Data Relay Control is not a VPN, generic remote-management tool, SASE platform, SIEM, SOAR, data lake, enterprise IAM system, or endpoint-management platform.
+DataRelay Control is not a VPN, generic remote-management tool, SASE platform, SIEM, SOAR, data lake, enterprise IAM system, or endpoint-management platform.
 
-It is also **not currently a centralized manager for Data Relay Link**. The audited source contains no implemented Link registration, heartbeat, policy-delivery, or state-synchronization protocol. See [Data Relay Link relationship](/getting-started/data-relay-link).
+It is also **not currently a centralized manager for DataRelay Link**. The audited source contains no implemented Link registration, heartbeat, policy-delivery, or state-synchronization protocol. See [DataRelay Link relationship](/getting-started/data-relay-link).
 
 ## Implementation status at a glance
 
@@ -61,7 +61,7 @@ It is also **not currently a centralized manager for Data Relay Link**. The audi
 | Marketplace lifecycle and UI | Implemented on development branch; not proven as tagged stable |
 | Remote/private registry | Implemented on development branch; not proven as tagged stable |
 | AI Connector Builder core | Implemented on development branch; external network AI provider not required |
-| Data Relay Link integration | Not supported in audited source |
+| DataRelay Link integration | Not supported in audited source |
 | Multi-node HA | Not supported as a GA deployment model |
 
 Start with the [Quick Start](/getting-started/quickstart), then review [Architecture](/getting-started/architecture), [License](/reference/license), and [Known Limitations](/reference/limitations).

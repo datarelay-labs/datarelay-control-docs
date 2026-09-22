@@ -7,7 +7,7 @@ description: "애플리케이션과 DB schema를 안전하게 갱신하는 원�
 
 업그레이드 전 PostgreSQL backup, 현재 Git ref, 환경 설정, container health를 확보하십시오.
 
-Data Relay Control은 Alembic migration을 사용합니다. 지원 stack에서는 startup 경로에서 `alembic upgrade head`가 실행됩니다.
+DataRelay Control은 Alembic migration을 사용합니다. 지원 stack에서는 startup 경로에서 `alembic upgrade head`가 실행됩니다.
 
 Marketplace package upgrade와 제품 upgrade는 다릅니다. Package upgrade가 running Stream, Credential, checkpoint를 자동으로 바꾸면 안 됩니다.
 
