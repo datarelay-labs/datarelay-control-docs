@@ -1,32 +1,25 @@
 ---
 title: "Release Status"
-description: "What is tag-proven stable versus implemented on the audited development branch."
+description: "Current DataRelay Control release identity and immutable Git evidence."
 ---
 
 # Release Status
 
-This repository currently has a release-history inconsistency that public documentation must not hide.
+The product source currently identifies the release line as **GA v1.0.2** in both the repository README and `CHANGELOG.md`.
 
-## Tag-proven stable
+Git evidence must be distinguished from that product identity:
 
-The repository Git refs confirm a `v1.0.0` tag.
-
-The source `CHANGELOG.md` also describes `1.0.1` and `1.0.2`, and the current README labels the product “GA v1.0.2”. However, the repository ref audit performed for this site did **not** find a `v1.0.2` tag, and the GitHub Releases API returned no release objects.
-
-Therefore:
-
-| Track | Documentation treatment |
+| Track | Current evidence |
 |---|---|
-| `v1.0.0` | Tag-proven stable release |
-| `1.0.1` / `1.0.2` changelog entries | Documented release lineage, but not tag-proven by this audit |
-| `feature/post-m29-development` @ `b78aa66eebae` | Current audited development implementation |
+| `v1.0.0` | Immutable Git tag present |
+| `1.0.1` | Recorded in `CHANGELOG.md`; no `v1.0.1` tag observed in the current remote tag audit |
+| `1.0.2` | README labels GA v1.0.2 and `CHANGELOG.md` records it; no `v1.0.2` tag observed in the current remote tag audit |
+| `main-v2` | Current development integration branch; contains changes beyond the last tag-proven baseline |
 
-## Development implementation
+GitHub Releases currently exposes no release objects for this repository.
 
-The audited development branch is 86 commits ahead of `main-v2` and includes later Marketplace, safe-change, troubleshooting, Connector Health, Test Before Apply, and environment-promotion work.
+## Documentation rule
 
-These pages label those features **implemented in development / under validation**, not immutable stable behavior.
+This site follows the current `main-v2` implementation for product behavior, while release claims remain explicit about whether they are source-documented or immutable-tag proven.
 
-## Operator rule
-
-Before production upgrade, pin the exact Git tag or commit you intend to run. Do not deploy an unpinned branch and assume this site guarantees identical behavior forever.
+For production use, pin the exact tag or commit you intend to run. Do not treat a mutable branch name as immutable release evidence.
