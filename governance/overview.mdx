@@ -5,7 +5,7 @@ description: "Optional data-control capabilities without exposing internal engin
 
 # Governance
 
-Governance is an optional **data-control capability**, not a standalone compliance platform.
+Governance adds policy, review, quarantine, approval, replay, and audit functions to data flows. It is not a standalone compliance platform.
 
 Users define intent:
 
@@ -20,7 +20,7 @@ The runtime applies Protection, Classification, Policy, Quarantine, and Replay b
 
 ## Current operational surfaces
 
-The current Web UI includes governance Dashboard, Operations, Violations, Quarantine, Audit, Approvals, Replay, Notifications, and Governance Workspace routes.
+The current Web UI includes Dashboard, Operations, Violations, Quarantine, Audit, Approvals, Replay, Notifications, and Governance Workspace screens.
 
 ## Route-aware behavior
 
@@ -28,6 +28,6 @@ A shared/default intent can belong to the Stream configuration while effective d
 
 ## Important limits
 
-- Governance Workspace is a read-only MVP for some workflows.
+- Some Governance Workspace functions are still read-only.
 - The Workspace fan-out pattern scales as multiple API calls per Route and is not the preferred daily fleet dashboard at high route counts.
 - SMTP notification delivery is disabled until SMTP is configured.
