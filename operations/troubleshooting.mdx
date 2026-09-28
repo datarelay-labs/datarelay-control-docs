@@ -1,11 +1,11 @@
 ---
 title: "Troubleshooting"
-description: "Evidence-first checks for startup, data collection, delivery, and policy issues."
+description: "Troubleshoot startup, data collection, delivery, and policy issues from actual runtime records."
 ---
 
 # Troubleshooting
 
-Start with actual runtime evidence rather than configuration assumptions.
+Start with the runtime records from the failed path instead of assuming the configuration is correct.
 
 ## Service startup
 
@@ -32,7 +32,7 @@ and non-placeholder values for `JWT_SECRET_KEY`, `SECRET_KEY`, `ENCRYPTION_KEY`,
 Check:
 
 1. Connector and Credential status.
-2. Source test/collection evidence.
+2. Source test and collection results.
 3. event extraction/sample selection.
 4. Stream enabled state.
 5. checkpoint and runtime run state.
@@ -59,4 +59,4 @@ A concurrent active Stream run can return HTTP 409 `RUN_ALREADY_ACTIVE`.
 
 ## Development branch
 
-Use Data Flow Troubleshooter and Connector/API Health where available; both are designed to summarize existing evidence rather than run hidden side-effecting probes.
+Use Data Flow Troubleshooter and Connector/API Health where available; both summarize existing runtime data rather than running hidden probes that change state.
