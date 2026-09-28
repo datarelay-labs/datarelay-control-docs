@@ -1,18 +1,18 @@
 ---
 title: "DataRelay Control"
-description: "Enterprise data collection, route processing, protection, governance, and multi-destination delivery."
+description: "Collect enterprise data, process it per route, apply protection and policy, and deliver it to one or more destinations."
 ---
 
 # DataRelay Control
 
 DataRelay Control is a source-available **Enterprise Data Control Gateway** implemented in [`datarelay-labs/datarelay-control`](https://github.com/datarelay-labs/datarelay-control).
 
-It sits in the data path: it collects data, transforms it, applies route-specific protection and policy, records operational evidence, and delivers one Stream through one or many Routes to one or many Destinations.
+It participates directly in the data flow: it collects data, transforms it, applies route-specific protection and policy, records delivery results, and sends one Stream through one or many Routes to one or many Destinations.
 
 > **One Stream → Many Routes → Many Destinations**
 
 <Note>
-The current product repository identifies the release line as **GA v1.0.2** in its README and changelog. Immutable Git tag evidence is tracked separately on the [Release Status](/reference/release-status) page. Current development documentation follows the canonical `main-v2` source and distinguishes development-only behavior from release-proven behavior.
+The product repository identifies the release line as **GA v1.0.2** in its README and changelog. [Release Status](/reference/release-status) separately shows what is backed by an immutable Git tag. Development documentation follows `main-v2` and clearly marks behavior that has not yet been proven in a release.
 </Note>
 
 ## What it solves
@@ -32,15 +32,15 @@ flowchart LR
 
 A Stream owns execution and source progress. A Route owns destination-specific processing and delivery.
 
-## Current product surface
+## What the current product includes
 
 - connectors, credentials, sources, Streams, Routes, and Destinations
 - Mapping and Enrichment, presented in the UI as Transform
 - route-specific Protection, Classification, Policy, Quarantine, and Replay
-- Dashboard, Streams runtime views, delivery evidence, checkpoints, and audit
-- local users, roles, JWT sessions, and RBAC-gated operator/governance surfaces
+- Dashboard, Stream runtime views, delivery results, checkpoints, and audit
+- local users, roles, JWT sessions, and RBAC-protected operator and governance screens
 - backup, restore, upgrade, health, and troubleshooting workflows
-- Marketplace/package lifecycle, safe-change preview, connector/API health, test-before-apply, and environment-promotion work present on the current development line
+- Marketplace/package management, safe-change preview, connector/API health, test-before-apply, and environment promotion available on the current development branch
 
 ## Product boundary
 
