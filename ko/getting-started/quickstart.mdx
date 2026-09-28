@@ -1,11 +1,11 @@
 ---
 title: "빠른 시작"
-description: "현재 개발 구현을 production-style HTTPS Compose로 설치하는 검증 가능한 경로."
+description: "현재 개발 버전을 HTTPS Compose 구성으로 설치하고 동작을 확인하는 절차입니다."
 ---
 
 # 빠른 시작
 
-개발 validation 설정이 포함된 `docker-compose.platform.yml`을 production 경로로 그대로 안내하지 않습니다. 아래는 현재 코드의 `deploy/docker-compose.https.yml`을 사용합니다.
+개발 검증용 설정이 포함된 `docker-compose.platform.yml`은 운영 설치 예제로 사용하지 않습니다. 아래 절차에서는 현재 코드의 `deploy/docker-compose.https.yml`을 사용합니다.
 
 ```bash
 git clone https://github.com/datarelay-labs/datarelay-control.git
@@ -14,7 +14,7 @@ git checkout main-v2
 cp .env.example .env
 ```
 
-다음으로 production-style HTTPS stack을 실행합니다.
+다음으로 HTTPS 구성을 실행합니다.
 
 ```bash
 export GDC_RELEASE_COMPOSE_FILE=deploy/docker-compose.https.yml
@@ -32,9 +32,9 @@ docker compose -f deploy/docker-compose.https.yml ps
 curl -k https://localhost:18443/health
 ```
 
-브라우저에서 `https://SERVER:18443/`에 접속합니다. 새 설치에서 `GDC_SEED_ADMIN_PASSWORD`를 지정하지 않았다면 `admin / admin`으로 로그인한 뒤 즉시 비밀번호를 변경해야 합니다.
+브라우저에서 `https://SERVER:18443/`에 접속합니다. 새 설치에서 `GDC_SEED_ADMIN_PASSWORD`를 지정하지 않았다면 `admin / admin`으로 처음 로그인한 뒤 즉시 비밀번호를 변경하십시오.
 
-그 다음 **Connectors**에서 Connector를 먼저 생성하고 **Streams → Create First Stream**을 사용합니다.
+그 다음 **Connectors**에서 Connector를 먼저 만든 뒤 **Streams → Create First Stream**에서 첫 Stream을 생성합니다.
 
 ```text
 Connect → Sample → Destinations → Route Processing → Deploy
