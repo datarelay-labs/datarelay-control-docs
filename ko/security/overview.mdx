@@ -7,9 +7,9 @@ description: "구현된 보안 제어와 경계."
 
 Production startup은 placeholder/짧은 secret, 약한 DB password, `REQUIRE_AUTH=false`, `AUTH_DEV_HEADER_TRUST=true`를 거부합니다.
 
-사용자 password는 bcrypt hash로 저장됩니다. Connector credential은 별도 runtime credential 경로를 사용하고 at-rest encryption 구조를 사용합니다.
+사용자 비밀번호는 bcrypt hash로 저장됩니다. Connector 인증 정보는 별도 런타임 경로에서 관리하며 저장 시 암호화 구조를 사용합니다.
 
-중앙 HTTP authorization evaluator가 role/method/path를 검사합니다.
+중앙 HTTP 권한 검사기가 역할, HTTP method, 경로를 확인합니다.
 
 Marketplace V1 package는 선언형이며 arbitrary executable code를 허용하지 않습니다. 개발 브랜치에는 archive safety, secret scan, digest/signature, trusted key 등이 구현되어 있습니다.
 
