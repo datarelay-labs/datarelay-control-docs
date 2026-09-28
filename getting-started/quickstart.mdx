@@ -5,7 +5,7 @@ description: "Install the current development implementation with the production
 
 # Quick Start
 
-This path uses the **current development implementation** audited for this documentation. It deliberately avoids presenting `docker-compose.platform.yml` as a production path because that file also contains development-validation defaults.
+This path uses the **current development implementation** reviewed for this documentation. It uses `deploy/docker-compose.https.yml` instead of `docker-compose.platform.yml`, which also contains development-validation defaults.
 
 ## 1. Clone the audited implementation
 
@@ -21,7 +21,7 @@ git checkout main-v2
 cp .env.example .env
 ```
 
-Do not publish the service with the placeholder secrets from `.env.example`. The release installer detects missing/insecure release secrets and generates secure values where its current release flow supports that behavior.
+Do not expose the service with placeholder secrets from `.env.example`. The release installer detects missing or insecure release secrets and generates secure values where the current release flow supports it.
 
 ## 3. Use the production-style HTTPS stack
 
