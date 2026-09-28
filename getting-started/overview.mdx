@@ -19,7 +19,7 @@ The core entities are:
 | Destination | Concrete delivery target |
 | Source Pack | Declarative integration content; not a runtime process |
 
-## Primary operator workflow
+## Typical setup flow
 
 1. Create or install an integration/Connector.
 2. Configure credentials and source access.
@@ -28,12 +28,12 @@ The core entities are:
 5. Select one or more Destinations.
 6. Configure Route Processing where destinations need different handling.
 7. Deploy.
-8. Monitor Dashboard, Streams, runtime evidence, and governance surfaces.
+8. Monitor Dashboard and Streams, then review delivery records and governance views as needed.
 
 ## Source types proven in the current product line
 
-The repository documents and implements HTTP API polling and webhook receiver sources. A PostgreSQL runtime path is also implemented for database-query sources. Additional adapters may exist, but this site only promotes paths that can be proven from the audited source.
+The repository implements HTTP API polling and webhook receiver sources, plus a PostgreSQL path for database queries. Other adapters may exist in the codebase, but this site documents only the paths verified in the current source.
 
 ## Product naming
 
-Public documentation uses **DataRelay Control** consistently. Some technical identifiers in the source still use `gdc`, such as the repository name, environment-variable prefixes, Docker object names, and database defaults. Those identifiers are preserved where changing them would make commands inaccurate.
+Public documentation uses **DataRelay Control** consistently. Some source identifiers still use `gdc`, including environment-variable prefixes, Docker object names, and database defaults. The documentation keeps those identifiers where they are required for accurate commands.
