@@ -58,8 +58,8 @@ POST /api/v1/auth/login
 
 ## OpenAPI
 
-FastAPI generates an OpenAPI schema from the running implementation. Treat the OpenAPI output of the exact version you operate as the authoritative endpoint/field reference.
+FastAPI generates an OpenAPI schema from the running implementation. Use the OpenAPI output from the exact version you operate as the endpoint and field reference.
 
 <Note>
-Historical AI modules exist in the repository, but the current application entry point explicitly does not mount AI Gateway HTTP routers as part of the DataRelay Control product surface.
+Historical AI modules exist in the repository, but the current application entry point does not mount the AI Gateway HTTP routers in the DataRelay Control API.
 </Note>
