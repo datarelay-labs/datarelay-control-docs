@@ -1,14 +1,14 @@
 ---
 title: "Connectors & Marketplace"
-description: "Connector Registry와 개발 브랜치 Marketplace 기능."
+description: "Connector Registry와 개발 브랜치에서 제공하는 Marketplace 기능을 설명합니다."
 ---
 
 # Connectors & Marketplace
 
-Connector는 연결 family이고 Source Pack은 선언형 integration content입니다. 둘 다 runtime 실행 단위가 아닙니다.
+Connector는 연결 방식을 정의하고 Source Pack은 선언형 연동 내용을 담습니다. 둘 자체가 실행 프로세스는 아닙니다.
 
-현재 개발 브랜치에는 Manifest v2, unified registry, install/upgrade/rollback/uninstall, validator, secret scan, digest/signature, trusted key, license/provenance, Connector Harvester, AI Connector Builder core, Marketplace UI, private/remote registry, offline signed bundle 경로가 구현되어 있습니다.
+현재 개발 브랜치에는 Manifest v2, 통합 registry, 설치/업그레이드/롤백/제거, 검증, secret scan, digest/signature, trusted key, 라이선스/출처 확인, Connector Harvester, AI Connector Builder 핵심 기능, Marketplace UI, private/remote registry, 오프라인 signed bundle 경로가 구현되어 있습니다.
 
 다만 이 사이트는 해당 기능을 **tag-proven stable**이라고 표현하지 않습니다.
 
-Package 설치만으로 Credential 생성, Stream enable, running Stream 변경, checkpoint 진행이 일어나서는 안 됩니다.
+패키지를 설치했다는 이유만으로 Credential이 생성되거나 Stream이 활성화되거나, 실행 중인 Stream과 Checkpoint가 바뀌어서는 안 됩니다.

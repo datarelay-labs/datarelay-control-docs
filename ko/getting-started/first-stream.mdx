@@ -1,19 +1,19 @@
 ---
-title: "첫 Stream"
-description: "Connector부터 Route/Destination까지 첫 데이터 흐름 만들기."
+title: "첫 Stream 만들기"
+description: "Connector와 Source를 연결하고 첫 Stream, Route, Destination을 구성합니다."
 ---
 
-# 첫 Stream
+# 첫 Stream 만들기
 
-현재 제품은 Connector, Source, Stream, Route, Destination을 분리합니다.
+DataRelay Control은 Connector, Source, Stream, Route, Destination을 서로 다른 역할로 구분합니다.
 
-1. **Connectors**에서 Connector를 생성하거나 개발 브랜치 Marketplace에서 package를 설치합니다.
+1. **Connectors**에서 Connector를 생성하거나 개발 브랜치의 Marketplace에서 패키지를 설치합니다.
 2. Credential을 별도로 구성합니다.
 3. **Streams → Create First Stream**을 엽니다.
-4. Connect에서 기존 Connector와 Source 접근을 설정합니다.
+4. Connect 단계에서 기존 Connector와 Source 접근 정보를 설정합니다.
 5. Sample에서 이벤트 구조를 확인합니다.
-6. Destinations에서 하나 이상의 Destination을 선택합니다.
-7. Route Processing에서 목적지별 차이가 필요한 Route만 Override합니다.
+6. Destinations에서 데이터를 보낼 Destination을 하나 이상 선택합니다.
+7. Route Processing에서는 목적지별로 별도 처리가 필요한 Route만 설정을 덮어씁니다.
 8. Deploy 후 Dashboard/Streams에서 상태를 확인합니다.
 
 Webhook Source가 구성된 경우 실제 ingest endpoint는 다음과 같습니다.

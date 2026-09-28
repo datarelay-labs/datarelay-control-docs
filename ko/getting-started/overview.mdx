@@ -12,11 +12,11 @@ description: "DataRelay Control의 현재 제품 범위와 운영 모델."
 | Connector | 연결 유형과 인증 capability |
 | Credential | 실제 secret을 보유하는 인증 개체 |
 | Source | 구체적인 데이터 소스 설정 |
-| Stream | 실행 및 checkpoint 소유 단위 |
+| Stream | 실행과 Checkpoint를 관리하는 단위 |
 | Route | 목적지별 처리/전달 단위 |
 | Destination | 실제 전달 대상 |
 | Source Pack | 선언형 integration content; runtime 프로세스 아님 |
 
-기본 운영 흐름은 Connector/자격증명 준비 → Stream 생성 → Sample 확인 → Destination 선택 → Route Processing → Deploy → Dashboard/Streams 모니터링 순서입니다.
+기본 흐름은 Connector와 인증 정보 준비 → Stream 생성 → Sample 확인 → Destination 선택 → Route Processing → Deploy → Dashboard/Streams 확인 순서입니다.
 
 공개 문서에서는 **DataRelay Control**을 사용합니다. 다만 실제 코드의 환경 변수, Docker 이름, 저장소 경로에 남아 있는 `GDC_*` 등의 기술 식별자는 명령 정확성을 위해 그대로 표기합니다.

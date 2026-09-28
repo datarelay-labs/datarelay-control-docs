@@ -5,8 +5,8 @@ description: "Dashboard와 runtime evidence 기반 운영."
 
 # 운영 개요
 
-일상 운영은 Dashboard/Streams에서 상태를 보고 문제가 있는 Stream/Route/Destination으로 drill-down하는 흐름이 기본입니다.
+일상 운영에서는 먼저 Dashboard와 Streams에서 상태를 확인하고, 문제가 있는 Stream → Route → Destination 순서로 세부 내용을 확인합니다.
 
-Runtime은 delivery log, route outcome, snapshot/analytics, checkpoint, schema drift, governance/audit evidence를 남깁니다.
+실행 중에는 전달 로그, Route 결과, snapshot/analytics, Checkpoint, 스키마 변경, governance/audit 기록이 남습니다.
 
-개발 브랜치에는 Data Flow Troubleshooter, Safe Change, Connector/API Health, Test Before Apply, Environment Promotion이 구현되어 있으며 기존 evidence/configuration을 재사용합니다.
+개발 브랜치에는 Data Flow Troubleshooter, Safe Change, Connector/API Health, Test Before Apply, Environment Promotion이 구현되어 있습니다. 이 기능들은 기존 실행 기록과 설정 정보를 사용합니다.

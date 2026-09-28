@@ -5,7 +5,7 @@ description: "Control-plane and data-path architecture based on the current runt
 
 # Architecture
 
-The current implementation combines control-plane configuration with an active data-delivery runtime.
+The product combines configuration and administration with a runtime that actively collects, processes, and delivers data.
 
 ```mermaid
 flowchart TB
@@ -26,11 +26,11 @@ flowchart TB
 
 ## Control plane
 
-The control plane includes configuration CRUD, authentication/RBAC, Marketplace package lifecycle, credentials, deployment readiness, operator actions, audit, backup/import, and policy configuration.
+The control plane handles configuration CRUD, authentication/RBAC, Marketplace packages, credentials, deployment readiness, operator actions, audit, backup/import, and policies.
 
 ## Data path
 
-The data path includes source fetch or webhook ingest, extraction, Transform, Protection, Classification, Policy, destination delivery, retry/recovery behavior, runtime evidence, and checkpoint decisions.
+The data path handles source polling or webhook ingest, extraction, Transform, Protection, Classification, Policy, destination delivery, retry/recovery, delivery records, and checkpoint decisions.
 
 <Warning>
 DataRelay Control is therefore **not a management-only controller** in the current source. It carries and processes the events it delivers.

@@ -1,15 +1,15 @@
 ---
 title: "Operations"
-description: "Monitor data flow health and use evidence-driven operator workflows."
+description: "Monitor data-flow health and use recorded delivery and runtime information to troubleshoot problems."
 ---
 
 # Operations
 
 Daily operation starts with Dashboard and Streams, then drills into the affected Stream, Route, or Destination.
 
-## Runtime evidence
+## Runtime records
 
-The platform records delivery logs, route outcomes, runtime snapshots/analytics, checkpoint state, schema drift evidence, and governance/audit events.
+The platform records delivery logs, route outcomes, runtime snapshots/analytics, checkpoint state, schema changes, and governance/audit events.
 
 The `/health` endpoint reports API status and a delivery-log index health probe.
 
@@ -17,13 +17,13 @@ The `/health` endpoint reports API status and a delivery-log index health probe.
 
 Current development history includes:
 
-- Data Flow Troubleshooter built from structured runtime evidence
+- Data Flow Troubleshooter built from existing runtime records
 - safe-change impact preview and guarded apply
-- Connector/API Health derived from existing auth, credential, and delivery evidence
+- Connector/API Health derived from existing auth, credential, and delivery records
 - Test Before Apply impact preview
 - environment-promotion export/preview/apply
 
-These reuse existing runtime/configuration evidence rather than creating parallel monitoring or deployment engines.
+These features reuse existing runtime and configuration data instead of running a separate monitoring or deployment engine.
 
 ## Recommended drill-down
 
@@ -31,4 +31,4 @@ These reuse existing runtime/configuration evidence rather than creating paralle
 Dashboard → Stream Group/Stream → Runtime evidence → Route/Destination → Action
 ```
 
-Use Governance Workspace for targeted governance review rather than continuous fleet monitoring.
+Use Governance Workspace for focused governance review rather than continuous system monitoring.

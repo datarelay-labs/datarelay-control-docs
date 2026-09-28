@@ -1,13 +1,13 @@
 ---
 title: "API 참고"
-description: "현재 FastAPI route group과 인증 기본."
+description: "현재 FastAPI 엔드포인트 그룹과 인증 기본 동작을 설명합니다."
 ---
 
 # API 참고
 
 기본 API prefix는 `/api/v1`입니다.
 
-주요 group은 `/auth`, `/admin`, `/connectors`, `/credentials`, `/sources`, `/streams`, `/connectors-registry`, `/audit-logs`, `/backup`, `/mappings`, `/enrichments`, `/destinations`, `/routes`, `/logs`, `/runtime`, `/ingest`, `/retention`, `/delivery`, `/validation`, `/governance`입니다.
+주요 그룹은 `/auth`, `/admin`, `/connectors`, `/credentials`, `/sources`, `/streams`, `/connectors-registry`, `/audit-logs`, `/backup`, `/mappings`, `/enrichments`, `/destinations`, `/routes`, `/logs`, `/runtime`, `/ingest`, `/retention`, `/delivery`, `/validation`, `/governance`입니다.
 
 Health:
 
@@ -17,6 +17,6 @@ GET /health
 
 Production API는 로그인에서 받은 Bearer access JWT를 사용합니다.
 
-FastAPI가 실행 중인 코드에서 OpenAPI schema를 생성하므로, 실제 운영 버전의 OpenAPI를 endpoint/field 최종 기준으로 사용하십시오.
+FastAPI가 실행 중인 코드에서 OpenAPI schema를 생성하므로, 실제 운영 중인 버전에서 생성한 OpenAPI를 엔드포인트와 필드의 최종 기준으로 사용하십시오.
 
-현재 app entry point는 historical AI module을 현재 Product API로 mount하지 않습니다.
+현재 애플리케이션 entry point는 과거 AI 모듈을 DataRelay Control 제품 API에 연결하지 않습니다.

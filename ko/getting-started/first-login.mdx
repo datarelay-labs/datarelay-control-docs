@@ -12,6 +12,6 @@ description: "초기 관리자와 JWT session 동작."
 - `GDC_SEED_ADMIN_PASSWORD`로 초기 비밀번호 변경 가능
 - bootstrap 재실행은 기존 admin 비밀번호를 초기화하지 않음
 
-로그인은 access/refresh JWT를 발급합니다. 기본 access token은 60분, refresh token은 1440분이며 refresh 시 token pair가 회전합니다. 비밀번호 변경 또는 전체 session revoke 시 `token_version`이 증가하여 이전 token이 무효화됩니다.
+로그인하면 access/refresh JWT가 발급됩니다. 기본 access token은 60분, refresh token은 1440분 동안 유효하며 refresh할 때 새 token pair가 발급됩니다. 비밀번호를 변경하거나 모든 세션을 해제하면 `token_version`이 증가해 이전 token은 사용할 수 없게 됩니다.
 
 Production에서는 `REQUIRE_AUTH=false`가 startup 단계에서 거부됩니다.
