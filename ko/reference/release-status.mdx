@@ -1,11 +1,11 @@
 ---
 title: "릴리스 상태"
-description: "DataRelay Control의 현재 Release Identity와 Immutable Git Evidence."
+description: "DataRelay Control의 현재 릴리스 상태와 Git tag로 확인되는 버전을 설명합니다."
 ---
 
 # 릴리스 상태
 
-현재 제품 Source의 README와 `CHANGELOG.md`는 Release Line을 **GA v1.0.2**로 표시합니다.
+현재 제품 소스의 README와 `CHANGELOG.md`는 릴리스 계열을 **GA v1.0.2**로 표시합니다.
 
 다만 Git Evidence는 별도로 구분해야 합니다.
 
@@ -16,10 +16,10 @@ description: "DataRelay Control의 현재 Release Identity와 Immutable Git Evid
 | `1.0.2` | README가 GA v1.0.2로 표시하고 `CHANGELOG.md`에 기록되어 있으나 현재 Remote Tag 감사에서 `v1.0.2` Tag 미확인 |
 | `main-v2` | 현재 Development Integration Branch. 마지막 Tag-proven Baseline 이후 변경 포함 |
 
-현재 GitHub Releases에는 Release Object가 없습니다.
+현재 GitHub Releases에는 별도 Release 항목이 없습니다.
 
 ## 문서 원칙
 
-이 사이트의 제품 동작 설명은 현재 `main-v2` 구현을 따르되, Release Claim은 Source Documented 상태와 Immutable Tag로 증명된 상태를 구분합니다.
+이 사이트의 기능 설명은 현재 `main-v2` 구현을 기준으로 합니다. 다만 릴리스 상태를 설명할 때는 소스 문서에 적힌 버전과 변경 불가능한 tag로 확인된 버전을 구분합니다.
 
-Production에서는 실행할 정확한 Tag 또는 Commit을 Pin하십시오. Mutable Branch 이름을 Immutable Release Evidence로 취급하지 마십시오.
+운영 환경에서는 실행할 정확한 tag 또는 commit을 고정하십시오. 변경될 수 있는 브랜치 이름을 릴리스 버전의 증거로 사용해서는 안 됩니다.
