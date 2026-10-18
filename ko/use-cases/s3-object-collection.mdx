@@ -7,6 +7,10 @@ description: "S3 Object Polling, Prefix/패턴 필터, Stream 및 Destination �
 
 **목표:** S3 호환 버킷의 가상 이벤트 파일을 수집하고 Stream/Route를 통해 전송합니다.
 
+<Note>
+**화면 버전:** 표시된 이미지는 과거 Control UI 테스트 캡처입니다. 현재 제품의 기본 5단계 순서(Connect → Sample & Record Selection → Destinations → Route Processing → Deploy)를 우선하세요. [번호별 화면 가이드](/ko/use-cases/screen-walkthrough)에서 차이를 설명합니다.
+</Note>
+
 ## 실행 순서와 완료 기준
 
 1. **필수 정보 준비:** Vendor 공식 API/연동 가이드에서 Endpoint, 인증 방식, 최소 권한, Pagination/Checkpoint, 응답 샘플을 확인합니다. 테스트용 비식별 이벤트와 실제 Destination 접속 정보를 준비합니다.
@@ -24,15 +28,6 @@ description: "S3 Object Polling, Prefix/패턴 필터, Stream 및 Destination �
 > DataRelay Control에서 이 제품의 로그를 수집하려고 합니다. 아래 공개 API 가이드와 비식별 JSON 샘플을 기준으로 Connector 연결·인증 필수값, API Request/Pagination, Event Root, Timestamp/ID/Checkpoint, Mapping·민감 필드 보호, 장애 시 확인 항목을 표로 작성해 주세요. 문서에 없는 정보는 임의로 생성하지 말고 '확인 필요'로 표시하세요.
 
 
-## 제품 화면 참고 (기존 검증 캡처)
-
-아래 이미지는 실제 Control 테스트에서 촬영된 기존 화면입니다. 최신 배포 UI와 다를 수 있으며 실제 데이터 전송 성공을 증명하지 않습니다.
-
-![Connect step — existing Control UI test capture](/images/screenshots/verified/wizard-connect.png)
-
-![Sample confirmation — existing Control UI test capture](/images/screenshots/verified/wizard-sample-confirmation.png)
-
-![Stream created — existing Control UI test capture](/images/screenshots/verified/wizard-deploy.png)
 
 ## 1. 테스트 객체 업로드
 
@@ -64,6 +59,15 @@ Control Runtime이 해당 S3 Endpoint에 접근할 수 있어야 합니다. 테�
 6. **Logs**와 실제 HTTP 수신 파일에서 `s3-001`을 찾습니다.
 
 **완료 조건:** S3 객체 발견, 레코드 추출, Route 전송 성공, 독립 수신 결과가 모두 일치합니다.
+
+![record-selection — numbered Control historical UI capture](/images/screenshots/annotated/record-selection.webp)
+
+*그림 1. **레코드 경로와 Checkpoint 선택.** ① 추천 Record Path를 검토하고 ② JSON Tree에서 실제 이벤트 필드를 확인한 다음 ③ Checkpoint Field를 지정합니다. 이 화면은 미확정 상태이므로 경고가 표시되어 있습니다.*
+
+
+![stream-actions — numbered Control historical UI capture](/images/screenshots/annotated/stream-actions.webp)
+
+*그림 2. **Stream 생성 후 실행 및 로그 확인.** ① Stream 생성 결과 확인 → ② 실제 Runtime이 정상일 때 Start Stream → ③ View logs에서 Run과 Route 결과 확인. 캡처에는 Runtime API unavailable이 표시되므로 실제 전송 성공 증거는 아닙니다.*
 
 ## 실패 시
 

@@ -7,16 +7,15 @@ description: "Dashboard에서 문제 Stream과 Route를 찾아 실제 로그와 
 
 **목표:** 중요한 데이터가 정상 수집·전송되는지 확인하고 장애 시 **Stream/Route/Destination** 단위로 문제를 좁힙니다.
 
+<Note>
+**화면 버전:** 표시된 이미지는 과거 Control UI 테스트 캡처입니다. 현재 제품의 기본 5단계 순서(Connect → Sample & Record Selection → Destinations → Route Processing → Deploy)를 우선하세요. [번호별 화면 가이드](/ko/use-cases/screen-walkthrough)에서 차이를 설명합니다.
+</Note>
+
 ## 적용 순서
 
 이 사례는 이미 구성된 Connector·Destination·Stream을 전제로 합니다. 아직 생성하지 않았다면 [커넥터별 수집 가이드](/ko/use-cases/index)에서 먼저 수집 Source를 설정하세요. 이후 이 페이지의 구체적인 단계를 수행하고 **실제 Logs와 Destination/격리 기록**을 검증합니다. 화면 캡처는 기존 테스트 증빙으로, 실제 결과를 대신하지 않습니다.
 
 
-## 제품 화면 참고 (기존 검증 캡처)
-
-아래 이미지는 실제 Control 테스트에서 촬영된 기존 화면입니다. 최신 배포 UI와 다를 수 있으며 실제 데이터 전송 성공을 증명하지 않습니다.
-
-![Dashboard — existing Control UI test capture](/images/screenshots/verified/dashboard-overview.png)
 
 ## 근무 시작 전
 
@@ -28,6 +27,10 @@ description: "Dashboard에서 문제 Stream과 Route를 찾아 실제 로그와 
 2. 확인 시간 범위를 기록하고 **Healthy/Warning/Critical**, **Incoming/Outgoing Events**, **Delivery Success Rate**를 확인합니다.
 3. **No Data / Low Volume** Stream을 찾습니다. 단, 원래 조용한 Source라면 데이터 0건이 정상일 수 있으므로 기대되는 수집 주기와 비교합니다.
 4. Destination Capacity, Schema Drift 등 Warning을 검토하되 Dashboard의 집계 결과만으로 장애 원인을 단정하지 않습니다.
+
+![dashboard-triage — numbered Control historical UI capture](/images/screenshots/annotated/dashboard-triage.webp)
+
+*그림 1. **Dashboard에서 장애 Stream 추적 시작.** ① 조회 기간을 설정하고 ② Health의 Critical/Warning을 확인한 다음 ③ Recent Alerts를 열어 영향 범위를 찾습니다. 근본 원인은 Streams·Routes·Logs에서 확인합니다.*
 
 ## 2. 문제 Stream 찾기
 

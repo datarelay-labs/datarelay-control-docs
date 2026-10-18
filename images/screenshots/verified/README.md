@@ -12,3 +12,7 @@ These six PNGs were copied from existing Playwright/UX validation artifacts in t
 | dashboard-overview.png | `frontend/dashboard-monitoring-screenshot.png` |
 
 No login screen is included. Do not use these images to assert successful connection, vendor credentials, policy application or delivered events. Refresh captures from an authenticated non-production Control session before declaring full screenshot coverage.
+
+## Additional historical captures (2026-10-19 docs update)
+
+The PNG files named `01-*` through `10-*`, `05-before-confirmation.png`, and `transform-step-screenshot.png` were copied without fabrication from Control's `frontend/validation-output/wizard-v3-manual/`, `frontend/validation-output/wizard-v3-ux-simplify/after/`, and `frontend/transform-step-screenshot.png` in the same source snapshot. They represent historical Playwright/UX test states including **failure and blocked deploy**; none should be interpreted as successful real-world delivery. The exact original basename is preserved for traceability. No login image was added.

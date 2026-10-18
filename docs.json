@@ -71,6 +71,7 @@
             "icon": "book",
             "pages": [
               "use-cases/index",
+              "use-cases/screen-walkthrough",
               "use-cases/lab-setup",
               "use-cases/webhook-first-flow",
               "use-cases/http-api",
@@ -175,6 +176,7 @@
             "icon": "book",
             "pages": [
               "ko/use-cases/index",
+              "ko/use-cases/screen-walkthrough",
               "ko/use-cases/lab-setup",
               "ko/use-cases/webhook-first-flow",
               "ko/use-cases/http-api",

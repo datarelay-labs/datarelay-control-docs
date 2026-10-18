@@ -7,16 +7,15 @@ description: "Use a controlled HTTP 503, inspect Route evidence, and prove recov
 
 **Goal:** reproduce an isolated Destination error, locate its cause in Control, restore the receiver, and verify new successful delivery.
 
+<Note>
+**Screen version:** The numbered images are historical Control UI test captures. Follow the current five-step flow (Connect → Sample & Record Selection → Destinations → Route Processing → Deploy), not older step ordering. See the [numbered screenshot guide](/use-cases/screen-walkthrough).
+</Note>
+
 ## When to use this scenario
 
 This scenario builds on an existing Connector, Destination and Stream. If you have not configured a Source yet, start from the [connector-specific collection guides](/use-cases/index). Follow the concrete steps below and verify **actual Logs and Destination/quarantine evidence**. Existing test screenshots are illustrative, not runtime proof.
 
 
-## Product UI reference (existing validation captures)
-
-These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
-
-![Dashboard — existing Control UI test capture](/images/screenshots/verified/dashboard-overview.png)
 
 ## Starting state
 
@@ -48,6 +47,10 @@ The **ingest** request may succeed even if downstream **delivery** fails. Do not
 3. Open **Logs** (`/logs`), filter by Stream, Route, time range, and failure status.
 4. Open the detail of a failed attempt. Record the run ID, route ID, stage, HTTP 503/result, retry/failure policy, and latest failure time.
 5. If available, inspect the Stream runtime/checkpoint view for pending work. Do not assume checkpoint advanced merely because ingestion succeeded.
+
+![dashboard-triage — numbered Control historical UI capture](/images/screenshots/annotated/dashboard-triage.webp)
+
+*Figure 1. **Beginning an investigation on Dashboard.** ① Set the time window, ② inspect Health/Critical, ③ use Recent Alerts for context. Verify the root cause in Streams, Routes and Logs.*
 
 ## 3. Restore the service
 

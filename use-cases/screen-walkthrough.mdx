@@ -1,0 +1,98 @@
+---
+title: "Follow the Stream Wizard with Screenshots"
+description: "Use numbered annotations on genuine Control test captures to select a Connector, test records, map fields, deploy and verify Logs."
+---
+
+# Follow the Stream Wizard with Screenshots
+
+<Warning>
+These are **genuine historical Control UI test screenshots**, cropped and numbered for explanation. They show an older **six-step Wizard**, whereas the current product flow is **Connect → Sample & Record Selection → Destinations → Route Processing → Deploy**. Follow the current UI's sequence, not the old step numbering visible inside these captures. Screenshots are not proof of delivered events.
+</Warning>
+
+**Before you start:** use [connector-specific guides](/use-cases/index) to prepare official API docs, least-privilege credentials, sanitized samples and a reachable Destination.
+
+
+## 1. Select the saved Connector
+
+Create the Connector first, then select it under **Connect**. Verify the real Vendor/Source values.
+
+![select-connector — numbered Control historical UI capture](/images/screenshots/annotated/select-connector.webp)
+
+*Figure 1. **Selecting an existing Connector.** ① Select your saved Connector (Generic REST is a test example). ② Continue to Sample. The Connector tab is already active.*
+
+## 2. Run a collection test
+
+Use **Run Test** to fetch samples and inspect status/record count. A successful test does not auto-confirm the record path.
+
+![run-test — numbered Control historical UI capture](/images/screenshots/annotated/run-test.webp)
+
+*Figure 2. **Testing collection and record count.** ① Run Test → ② verify HTTP status and extracted record count → ③ open Record Selection. An HTTP success is not proof of Destination delivery.*
+
+## 3. Confirm record path and checkpoint
+
+Select the true event array in JSON Tree, then a reliable checkpoint field. Confirm suggestions; do not accept them blindly.
+
+![record-selection — numbered Control historical UI capture](/images/screenshots/annotated/record-selection.webp)
+
+*Figure 3. **Choosing record path and checkpoint.** ① Review the suggested Record Path, ② inspect actual fields in JSON Tree, ③ select the Checkpoint Field. This capture shows the not-yet-confirmed state.*
+
+## 4. Verify mapped JSON output
+
+Compare Sample, Mapping and Preview in **Route Processing / Transform**. Configure Route differences after selecting Destinations.
+
+![field-mapping — numbered Control historical UI capture](/images/screenshots/annotated/field-mapping.webp)
+
+*Figure 4. **Mapping an event to output fields.** ① Inspect the source sample, ② configure Field Mapping, ③ compare Final Event Preview. A preview does not prove real delivery.*
+
+## 5. Add a custom field
+
+If required, use **Add field → Static Value**. Close the menu and verify the field appears in Preview.
+
+![add-static-field — numbered Control historical UI capture](/images/screenshots/annotated/add-static-field.webp)
+
+*Figure 5. **Adding a custom output field.** ① Select Add field, ② choose Static Value, then ③ close the menu and verify the new field in Final Event Preview.*
+
+## 6. Resolve deploy blockers
+
+If **NEEDS ATTENTION** appears, use **Edit** for Data/Records, correct the problem and re-check readiness.
+
+![deploy-readiness — numbered Control historical UI capture](/images/screenshots/annotated/deploy-readiness.webp)
+
+*Figure 6. **Resolving a blocked deployment.** ① Read NEEDS ATTENTION, ② use Edit on Data/Records to fix required inputs, ③ stop while the deployment button is disabled.*
+
+## 7. Check Stream runtime after creation
+
+After Stream creation, use **Start Stream** and **View logs** to confirm execution. This capture explicitly says **Runtime API unavailable**.
+
+![stream-actions — numbered Control historical UI capture](/images/screenshots/annotated/stream-actions.webp)
+
+*Figure 7. **Start and verify a newly created Stream.** ① Review Stream creation, ② use Start Stream only when runtime is available, ③ open View logs to verify execution. This historical capture says Runtime API unavailable.*
+
+## 8. Investigate operational health
+
+Inspect dashboard window, Health and Alerts; validate actual delivery through Route Logs and receiver data.
+
+![dashboard-triage — numbered Control historical UI capture](/images/screenshots/annotated/dashboard-triage.webp)
+
+*Figure 8. **Beginning an investigation on Dashboard.** ① Set the time window, ② inspect Health/Critical, ③ use Recent Alerts for context. Verify the root cause in Streams, Routes and Logs.*
+
+## Failure example: HTTP 503 on Source API Test
+
+This is a **Source API Test failure**, not a Destination error. Check vendor API status and configuration before retrying.
+
+![source-api-error — numbered Control historical UI capture](/images/screenshots/annotated/source-api-error.webp)
+
+*Figure 9. **HTTP 503 during Source API Test.** ① Read the HTTP 503 error, ② repair the source and Retry, ③ do not proceed while blocked. This is a Source API Test failure, not a Destination failure.*
+
+## Optional: resume a saved draft
+
+Use **Resume draft** to continue retained settings. Only choose **Start fresh** when you intend a new configuration.
+
+![saved-draft — numbered Control historical UI capture](/images/screenshots/annotated/saved-draft.webp)
+
+*Figure 10. **Resuming a saved Wizard draft.** ① Select Resume draft to continue existing settings or ② Start fresh for a new configuration. Preserve your draft before starting over.*
+
+
+---
+
+**Completion check:** a Stream run ID, a successful Route delivery log, and **actual Destination receipt** must match. See [Webhook walkthrough](/use-cases/webhook-first-flow) and [Logs evidence](/use-cases/logs-audit).

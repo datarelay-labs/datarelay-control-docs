@@ -7,6 +7,10 @@ description: "SYSLOG_UDP Destination을 생성하고 실제 UDP 수신 데이터
 
 **목표:** 가상 이벤트를 독립적인 Syslog UDP 수신기로 전달합니다. Control은 `SYSLOG_TCP`, `SYSLOG_TLS`도 제공하지만 이 실습은 UDP만 검증합니다.
 
+<Note>
+**화면 버전:** 표시된 이미지는 과거 Control UI 테스트 캡처입니다. 현재 제품의 기본 5단계 순서(Connect → Sample & Record Selection → Destinations → Route Processing → Deploy)를 우선하세요. [번호별 화면 가이드](/ko/use-cases/screen-walkthrough)에서 차이를 설명합니다.
+</Note>
+
 ## 적용 순서
 
 이 사례는 이미 구성된 Connector·Destination·Stream을 전제로 합니다. 아직 생성하지 않았다면 [커넥터별 수집 가이드](/ko/use-cases/index)에서 먼저 수집 Source를 설정하세요. 이후 이 페이지의 구체적인 단계를 수행하고 **실제 Logs와 Destination/격리 기록**을 검증합니다. 화면 캡처는 기존 테스트 증빙으로, 실제 결과를 대신하지 않습니다.
@@ -44,6 +48,10 @@ PY
 3. **Destinations**에서 `Lab Syslog UDP`를 선택합니다.
 4. **Route Processing**에서 기본 Transform, Route Delivery 설정 및 지원되는 포맷 Preview를 확인합니다.
 5. **Deploy** 차단 조건을 해결하고 저장/배포 후 필요하면 Stream을 실행합니다.
+
+![field-mapping — numbered Control historical UI capture](/images/screenshots/annotated/field-mapping.webp)
+
+*그림 1. **원본 이벤트를 대상 필드로 매핑.** ① Sample Event의 원본값 확인 → ② Field Mapping에서 대상 필드 매핑 → ③ Final Event Preview의 출력값 비교. Preview는 실제 전송 증빙이 아닙니다.*
 
 ## 4. 실제 전송 결과 검증
 

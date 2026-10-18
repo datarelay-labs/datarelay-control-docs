@@ -7,16 +7,15 @@ description: "Filter Logs by exact Stream/Route, save a local view, and export m
 
 **Goal:** prepare a reproducible evidence set for a delivery incident without confusing aggregate charts with a specific event's outcome.
 
+<Note>
+**Screen version:** The numbered images are historical Control UI test captures. Follow the current five-step flow (Connect → Sample & Record Selection → Destinations → Route Processing → Deploy), not older step ordering. See the [numbered screenshot guide](/use-cases/screen-walkthrough).
+</Note>
+
 ## When to use this scenario
 
 This scenario builds on an existing Connector, Destination and Stream. If you have not configured a Source yet, start from the [connector-specific collection guides](/use-cases/index). Follow the concrete steps below and verify **actual Logs and Destination/quarantine evidence**. Existing test screenshots are illustrative, not runtime proof.
 
 
-## Product UI reference (existing validation captures)
-
-These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
-
-![Dashboard — existing Control UI test capture](/images/screenshots/verified/dashboard-overview.png)
 
 ## 1. Open and scope Logs
 
@@ -24,6 +23,10 @@ These images are existing captures from Control UI tests. They may differ from t
 2. Choose a time range including the test. Filter by **Stream** and **Route**. Use status/level/stage filters to narrow the result.
 3. Find the relevant delivery row. Open its details to inspect the result, stage, timestamp, route, and any available run/error context.
 4. If you arrive from a Route or Destination detail via a deep link, verify the Stream/Route filters actually match your intended investigation.
+
+![stream-actions — numbered Control historical UI capture](/images/screenshots/annotated/stream-actions.webp)
+
+*Figure 1. **Start and verify a newly created Stream.** ① Review Stream creation, ② use Start Stream only when runtime is available, ③ open View logs to verify execution. This historical capture says Runtime API unavailable.*
 
 ## 2. Save a reusable view
 

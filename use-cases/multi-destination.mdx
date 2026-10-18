@@ -7,18 +7,15 @@ description: "Fan out one input to two Destinations and apply a different Transf
 
 **Goal:** one incoming event reaches an internal receiver and an external receiver without creating duplicate Streams.
 
+<Note>
+**Screen version:** The numbered images are historical Control UI test captures. Follow the current five-step flow (Connect → Sample & Record Selection → Destinations → Route Processing → Deploy), not older step ordering. See the [numbered screenshot guide](/use-cases/screen-walkthrough).
+</Note>
+
 ## When to use this scenario
 
 This scenario builds on an existing Connector, Destination and Stream. If you have not configured a Source yet, start from the [connector-specific collection guides](/use-cases/index). Follow the concrete steps below and verify **actual Logs and Destination/quarantine evidence**. Existing test screenshots are illustrative, not runtime proof.
 
 
-## Product UI reference (existing validation captures)
-
-These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
-
-![Protection persisted — existing Control UI test capture](/images/screenshots/verified/route-protection.png)
-
-![Transform add field — existing Control UI test capture](/images/screenshots/verified/transform-add-field.png)
 
 ## 1. Prepare the two receivers
 
@@ -51,6 +48,15 @@ Use the Webhook Receiver Connector from [first flow](/use-cases/webhook-first-fl
 6. Inspect the **effective Route preview** for each selected Route. Do not treat a draft Mapping/Enrichment preview as verified Destination delivery.
 7. Leave Delivery parameters associated with their own Route; don't expect Delivery settings to be globally inherited.
 8. **Deploy** and start the Stream if needed.
+
+![field-mapping — numbered Control historical UI capture](/images/screenshots/annotated/field-mapping.webp)
+
+*Figure 1. **Mapping an event to output fields.** ① Inspect the source sample, ② configure Field Mapping, ③ compare Final Event Preview. A preview does not prove real delivery.*
+
+
+![add-static-field — numbered Control historical UI capture](/images/screenshots/annotated/add-static-field.webp)
+
+*Figure 2. **Adding a custom output field.** ① Select Add field, ② choose Static Value, then ③ close the menu and verify the new field in Final Event Preview.*
 
 ## 5. Prove independent fan-out
 

@@ -7,6 +7,10 @@ description: "Configure S3 object polling, filter event objects, and verify deli
 
 **Goal:** read a synthetic event file from an S3-compatible bucket and deliver its records through a Stream.
 
+<Note>
+**Screen version:** The numbered images are historical Control UI test captures. Follow the current five-step flow (Connect → Sample & Record Selection → Destinations → Route Processing → Deploy), not older step ordering. See the [numbered screenshot guide](/use-cases/screen-walkthrough).
+</Note>
+
 ## End-to-end workflow and acceptance
 
 1. **Prepare requirements:** consult the vendor's official API/integration guide for endpoint, authentication, least-privilege scope, pagination/checkpoint and sample response. Obtain sanitized test events and actual Destination connectivity information.
@@ -24,15 +28,6 @@ description: "Configure S3 object polling, filter event objects, and verify deli
 > I want to collect this vendor's logs using DataRelay Control. Based only on the public API guide and redacted JSON sample below, list required Connector connection/auth fields, API request/pagination, event root, timestamp/ID/checkpoint, mapping and sensitive-field protection, and failure diagnostics. Mark undocumented information 'needs confirmation' rather than inventing values.
 
 
-## Product UI reference (existing validation captures)
-
-These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
-
-![Connect step — existing Control UI test capture](/images/screenshots/verified/wizard-connect.png)
-
-![Sample confirmation — existing Control UI test capture](/images/screenshots/verified/wizard-sample-confirmation.png)
-
-![Stream created — existing Control UI test capture](/images/screenshots/verified/wizard-deploy.png)
 
 ## 1. Prepare a controlled object
 
@@ -62,6 +57,15 @@ Your Control runtime must be able to reach the endpoint. Use non-production acce
 5. Check **Logs** plus the independent HTTP receiver file for `s3-001`.
 
 **PASS:** the expected object is discovered, a record is extracted, and the test Destination receives the corresponding event.
+
+![record-selection — numbered Control historical UI capture](/images/screenshots/annotated/record-selection.webp)
+
+*Figure 1. **Choosing record path and checkpoint.** ① Review the suggested Record Path, ② inspect actual fields in JSON Tree, ③ select the Checkpoint Field. This capture shows the not-yet-confirmed state.*
+
+
+![stream-actions — numbered Control historical UI capture](/images/screenshots/annotated/stream-actions.webp)
+
+*Figure 2. **Start and verify a newly created Stream.** ① Review Stream creation, ② use Start Stream only when runtime is available, ③ open View logs to verify execution. This historical capture says Runtime API unavailable.*
 
 ## If it fails
 

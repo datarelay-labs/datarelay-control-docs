@@ -7,18 +7,15 @@ description: "단일 Stream을 유지하면서 Route별로 서로 다른 데이�
 
 **목표:** 하나의 이벤트를 내부 시스템과 외부 시스템에 동시에 전송하되, 외부 전송에만 추가 필드를 넣습니다. **Stream을 2개 만들지 않습니다.**
 
+<Note>
+**화면 버전:** 표시된 이미지는 과거 Control UI 테스트 캡처입니다. 현재 제품의 기본 5단계 순서(Connect → Sample & Record Selection → Destinations → Route Processing → Deploy)를 우선하세요. [번호별 화면 가이드](/ko/use-cases/screen-walkthrough)에서 차이를 설명합니다.
+</Note>
+
 ## 적용 순서
 
 이 사례는 이미 구성된 Connector·Destination·Stream을 전제로 합니다. 아직 생성하지 않았다면 [커넥터별 수집 가이드](/ko/use-cases/index)에서 먼저 수집 Source를 설정하세요. 이후 이 페이지의 구체적인 단계를 수행하고 **실제 Logs와 Destination/격리 기록**을 검증합니다. 화면 캡처는 기존 테스트 증빙으로, 실제 결과를 대신하지 않습니다.
 
 
-## 제품 화면 참고 (기존 검증 캡처)
-
-아래 이미지는 실제 Control 테스트에서 촬영된 기존 화면입니다. 최신 배포 UI와 다를 수 있으며 실제 데이터 전송 성공을 증명하지 않습니다.
-
-![Protection persisted — existing Control UI test capture](/images/screenshots/verified/route-protection.png)
-
-![Transform add field — existing Control UI test capture](/images/screenshots/verified/transform-add-field.png)
 
 ## 1. 수신기 두 개 준비
 
@@ -51,6 +48,15 @@ description: "단일 Stream을 유지하면서 Route별로 서로 다른 데이�
 6. 두 Route 각각에서 **effective Preview**를 확인합니다. Draft Preview와 실제 Destination 전송은 별개입니다.
 7. Route별 Delivery 설정도 점검합니다. Delivery는 각 Route 고유 설정입니다.
 8. **Deploy**하고 필요한 경우 Stream을 Start합니다.
+
+![field-mapping — numbered Control historical UI capture](/images/screenshots/annotated/field-mapping.webp)
+
+*그림 1. **원본 이벤트를 대상 필드로 매핑.** ① Sample Event의 원본값 확인 → ② Field Mapping에서 대상 필드 매핑 → ③ Final Event Preview의 출력값 비교. Preview는 실제 전송 증빙이 아닙니다.*
+
+
+![add-static-field — numbered Control historical UI capture](/images/screenshots/annotated/add-static-field.webp)
+
+*그림 2. **Route에서 사용자 정의 필드 추가.** ① Add field를 누르고 ② Static Value를 선택합니다. ③ 메뉴를 닫은 다음 Final Event Preview에서 추가 필드가 반영됐는지 확인합니다.*
 
 ## 5. 실제 전송 및 비교
 
