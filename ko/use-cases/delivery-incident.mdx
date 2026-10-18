@@ -7,6 +7,17 @@ description: "HTTP 503 장애를 안전하게 재현하고 Route 실패 원인 �
 
 **목표:** 테스트 Destination을 HTTP 503으로 만들어 실제 실패 로그를 확인하고, 수신기를 복구하여 정상 전달을 증명합니다.
 
+## 적용 순서
+
+이 사례는 이미 구성된 Connector·Destination·Stream을 전제로 합니다. 아직 생성하지 않았다면 [커넥터별 수집 가이드](/ko/use-cases/index)에서 먼저 수집 Source를 설정하세요. 이후 이 페이지의 구체적인 단계를 수행하고 **실제 Logs와 Destination/격리 기록**을 검증합니다. 화면 캡처는 기존 테스트 증빙으로, 실제 결과를 대신하지 않습니다.
+
+
+## 제품 화면 참고 (기존 검증 캡처)
+
+아래 이미지는 실제 Control 테스트에서 촬영된 기존 화면입니다. 최신 배포 UI와 다를 수 있으며 실제 데이터 전송 성공을 증명하지 않습니다.
+
+![Dashboard — existing Control UI test capture](/images/screenshots/verified/dashboard-overview.png)
+
 ## 사전 조건
 
 [Webhook 첫 이벤트 전송](/ko/use-cases/webhook-first-flow)을 완료해 9011 포트 수신기에서 HTTP 200과 수신 파일을 확인한 상태입니다. **운영 Destination에서는 장애를 재현하지 않습니다.**
@@ -68,9 +79,3 @@ Route Delivery 설정의 Failover 구성을 사용하는 경우에도, 하나의
 - Analytics 링크의 필터가 사라짐: 현재 개발 E2E에서 일반 Dashboard로 Redirect된 문제가 있으므로 Logs에서 직접 필터링합니다. [#413](https://github.com/datarelay-labs/datarelay-control/issues/413)
 
 **관련:** [Logs 증빙](/ko/use-cases/logs-audit).
-
-## 제품 화면 참고 (기존 검증 캡처)
-
-아래 이미지는 실제 Control 테스트에서 촬영된 기존 화면입니다. 최신 배포 UI와 다를 수 있으며 실제 데이터 전송 성공을 증명하지 않습니다.
-
-![Dashboard — existing Control UI test capture](/images/screenshots/verified/dashboard-overview.png)

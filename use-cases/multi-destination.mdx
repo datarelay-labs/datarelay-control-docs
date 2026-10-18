@@ -7,6 +7,19 @@ description: "Fan out one input to two Destinations and apply a different Transf
 
 **Goal:** one incoming event reaches an internal receiver and an external receiver without creating duplicate Streams.
 
+## When to use this scenario
+
+This scenario builds on an existing Connector, Destination and Stream. If you have not configured a Source yet, start from the [connector-specific collection guides](/use-cases/index). Follow the concrete steps below and verify **actual Logs and Destination/quarantine evidence**. Existing test screenshots are illustrative, not runtime proof.
+
+
+## Product UI reference (existing validation captures)
+
+These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
+
+![Protection persisted — existing Control UI test capture](/images/screenshots/verified/route-protection.png)
+
+![Transform add field — existing Control UI test capture](/images/screenshots/verified/transform-add-field.png)
+
 ## 1. Prepare the two receivers
 
 Follow [Lab setup](/use-cases/lab-setup), running independent sinks on ports **9011** and **9012**, each with a separate `received-PORT.ndjson` output file. Use actual reachable test-host addresses.
@@ -61,11 +74,3 @@ Check `received-9011.ndjson` and `received-9012.ndjson`; correlate **the same in
 - **A second Stream was created for the other sink:** that is not required; consolidate the destinations under one Stream.
 
 **Next:** [mask sensitive fields on one Route](/use-cases/protect-pii).
-
-## Product UI reference (existing validation captures)
-
-These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
-
-![Protection persisted — existing Control UI test capture](/images/screenshots/verified/route-protection.png)
-
-![Transform add field — existing Control UI test capture](/images/screenshots/verified/transform-add-field.png)

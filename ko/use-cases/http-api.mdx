@@ -7,43 +7,32 @@ description: "실제 Vendor API 연결부터 샘플 선택·페이지 처리·Ch
 
 **목표:** 제품의 HTTP API Polling Connector로 이벤트를 수집해 일반 Stream/Route를 통해 Destination으로 전송합니다.
 
-## 시작 전: HTTP API 연동 정보 준비
+## 실행 순서와 완료 기준
 
-아래 정보를 먼저 준비해야 Connector와 Stream 설정 도중 중단되지 않습니다.
+1. **필수 정보 준비:** Vendor 공식 API/연동 가이드에서 Endpoint, 인증 방식, 최소 권한, Pagination/Checkpoint, 응답 샘플을 확인합니다. 테스트용 비식별 이벤트와 실제 Destination 접속 정보를 준비합니다.
+2. **모르는 항목은 ChatGPT로 정리:** 공개 API 문서와 비식별 샘플을 제공하고 Connector 필수 필드, 요청 예시, Event Root, Timestamp/ID, Cursor, 미확인 사항을 표로 요청합니다. **Token·비밀번호는 입력하지 않습니다.** ChatGPT 답변은 Vendor 문서와 Run Test로 검증합니다.
+3. **Connector 생성:** Connectors → Create Connector에서 이 페이지의 해당 Source Type을 선택하고 실제 접속·인증 정보를 입력합니다. 저장하고 연결 테스트를 확인합니다.
+4. **Destination 생성:** Destinations → Create에서 실제 수신기 유형(SYSLOG_UDP/TCP/TLS 또는 WEBHOOK_POST)을 선택하고 Host/Port/URL, TLS/인증을 입력합니다.
+5. **Stream 생성:** Streams → Create → Connect에서 Connector를 선택하고 Source 요청/수집 조건을 지정합니다.
+6. **샘플과 스키마:** Sample & Record Selection → Run Test에서 실제 레코드가 추출되는지 확인합니다. Record Root, Union Schema, Pagination 및 Checkpoint를 확정합니다.
+7. **데이터 처리:** Destinations에서 Route를 연결하고 Route Processing에서 Mapping, Timestamp, Enrichment, Masking/Drop/Quarantine을 설정합니다. Tokenization은 **실제 제품에서 지원되는 경우에만** 사용합니다. Route Effective Status와 최종 출력값을 확인합니다.
+8. **배포와 검증:** Deploy의 경고를 해결하고 Stream을 실행합니다. Run ID, Route Logs와 **실제 Destination 수신 기록**을 비교합니다. 이 세 가지가 일치해야 완료입니다.
+9. **장애 대응:** 연결/인증 오류는 API 권한·TLS·Network·429를, 레코드 0건은 Record Root·Pagination을, 전송 실패는 [Delivery Incident](/ko/use-cases/delivery-incident)를, 필드 변경은 [Schema Drift](/ko/use-cases/schema-change)를 확인합니다.
 
-1. **제품 API/연동 가이드 확인:** Base URL, endpoint/method, pagination, rate limits, sample response, API key/OAuth scope and token expiry. Vendor 공식 API 문서에서 실제 Endpoint, 인증 방법, 응답 샘플과 데이터 수집 제한을 확인합니다.
-2. **권한·네트워크 확인:** 읽기 전용/최소 권한 계정과 Control 서버에서 Source에 도달하는 네트워크를 준비합니다. 운영 Secret을 문서나 ChatGPT에 붙여넣지 않습니다.
-3. **데이터 정의 확인:** 실제 샘플 2~5개(개인정보 제거), 이벤트 배열/필드명, 시간·ID, 페이지 처리와 중복 방지 기준을 정리합니다.
-4. **목적지 정보 준비:** 수신 시스템의 IP/URL, Port, Protocol, TLS 및 인증, 정상 수신 확인 방법을 준비합니다.
-5. **모르겠다면 ChatGPT 활용:** Vendor API 문서의 공개된 부분과 비식별 샘플을 이용해 필수 Connector 항목·API Request·Record Root·Checkpoint 후보를 정리합니다. **생성된 설정은 공식 문서 및 Run Test로 검증**해야 합니다.
+### ChatGPT 질문 예시
 
-### ChatGPT에 물어볼 예시
+> DataRelay Control에서 이 제품의 로그를 수집하려고 합니다. 아래 공개 API 가이드와 비식별 JSON 샘플을 기준으로 Connector 연결·인증 필수값, API Request/Pagination, Event Root, Timestamp/ID/Checkpoint, Mapping·민감 필드 보호, 장애 시 확인 항목을 표로 작성해 주세요. 문서에 없는 정보는 임의로 생성하지 말고 '확인 필요'로 표시하세요.
 
-> DataRelay Control의 HTTP API Polling Connector로 로그를 수집하려고 합니다. 아래 공개 API 설명과 비식별 샘플을 기준으로 ① 필요한 인증/접속 정보 ② Request·Pagination ③ Event Root와 주요 필드 ④ Checkpoint 후보와 중복 위험 ⑤ Destination으로 전송하기 전 확인할 사항을 표로 정리해 주세요. 문서에서 확인되지 않은 정보는 추정하지 말고 확인 필요로 표시해 주세요.
 
-## 처음부터 끝까지 따라하기: 공통 작업 순서
+## 제품 화면 참고 (기존 검증 캡처)
 
-1. **Connector 생성:** Connectors → Create Connector → **HTTP API Polling**. 준비한 정보로 Host / Base URL, credential/auth mode, request path and parameters을(를) 입력합니다. 저장 후 제공되는 연결 테스트를 실행합니다.
-2. **Destination 생성:** Destinations → Create에서 실제 수신 시스템 유형(SYSLOG_UDP/TCP/TLS 또는 WEBHOOK_POST)을 선택하고 Host/Port/URL/TLS/인증을 설정합니다. 독립 테스트 수신기로 먼저 확인하는 것을 권장합니다.
-3. **Stream 생성:** Streams → Create → **Connect**에서 방금 만든 Connector를 선택하고 API/파일/DB 수집 조건을 지정합니다.
-4. **Sample & Record Selection:** Run Test로 실제 데이터가 수집되는지 확인합니다. Event Root, 추출 레코드, Union Schema, Checkpoint와 중복 처리 기준을 확인합니다.
-5. **Destinations:** 준비한 Destination을 선택하여 Route를 생성합니다.
-6. **Route Processing:** Mapping/Transform에서 필드명·시간·추가 필드를 확인합니다. 필요하면 개인정보 **Mask**, **Tokenize**(현재 버전에서 실제 제공되는 경우에만), Remove/Drop, Quarantine/Block을 선택합니다. Route별 Inherit/Override 및 Effective Status를 확인합니다. 보호 기능을 단순히 켰다고 실제 출력이 보호되었다고 가정하지 않습니다.
-7. **Deploy 및 실행:** Readiness 경고를 해결하고 저장·배포 후 Stream을 실행합니다.
-8. **최종 검증:** Run Test HTTP status, JSON record root, cursor/ordering and 401/403/429 troubleshooting. **Run ID, Route Delivery Log, 실제 수신 시스템의 데이터**를 대조합니다.
+아래 이미지는 실제 Control 테스트에서 촬영된 기존 화면입니다. 최신 배포 UI와 다를 수 있으며 실제 데이터 전송 성공을 증명하지 않습니다.
 
-### 실패·스키마 변경 시
+![Connect step — existing Control UI test capture](/images/screenshots/verified/wizard-connect.png)
 
-- **접속/인증 실패:** DNS/방화벽/TLS, Token 만료, API 권한, 호출 제한을 확인합니다.
-- **수집은 됐으나 레코드 0건:** 응답 Envelope, Record Root, Pagination, 파일 포맷을 다시 확인합니다.
-- **전송 실패:** Streams → Routes → Logs 순서로 Run/Route/Destination, Policy, Retry를 조사하고 [전송 장애 가이드](/ko/use-cases/delivery-incident)를 수행합니다.
-- **새 필드/타입 변경:** Union Schema의 Observed/Confirmed 상태, Field Path, Unknown Field 정책과 Route Override를 검토하고 [Schema Drift 가이드](/ko/use-cases/schema-change)를 수행합니다.
-- **마스킹·토크나이징 미적용:** 실제 버전의 지원 여부, Rule 저장, Effective Status, 최종 Destination Payload를 확인합니다. Preview만으로 성공 처리하지 않습니다.
+![Sample confirmation — existing Control UI test capture](/images/screenshots/verified/wizard-sample-confirmation.png)
 
-<Note>
-스크린샷은 제품 버전·화면 상태와 출처가 검증된 이미지에만 추가합니다. 현재 인증된 내부 화면의 신규 캡처가 확보되지 않은 단계는 텍스트 절차를 유지하며 가짜 UI 이미지를 사용하지 않습니다.
-</Note>
-
+![Stream created — existing Control UI test capture](/images/screenshots/verified/wizard-deploy.png)
 
 ## API 소유자에게 먼저 확보할 정보
 
@@ -102,13 +91,3 @@ description: "실제 Vendor API 연결부터 샘플 선택·페이지 처리·Ch
 **완료 조건:** 신규 이벤트가 독립 Destination에 저장되고, 그 이벤트의 Route 전송 로그와 Checkpoint 동작이 일치합니다.
 
 **관련:** [Schema 변경](/ko/use-cases/schema-change), [전송 장애](/ko/use-cases/delivery-incident).
-
-## 제품 화면 참고 (기존 검증 캡처)
-
-아래 이미지는 실제 Control 테스트에서 촬영된 기존 화면입니다. 최신 배포 UI와 다를 수 있으며 실제 데이터 전송 성공을 증명하지 않습니다.
-
-![Connect step — existing Control UI test capture](/images/screenshots/verified/wizard-connect.png)
-
-![Sample confirmation — existing Control UI test capture](/images/screenshots/verified/wizard-sample-confirmation.png)
-
-![Stream created — existing Control UI test capture](/images/screenshots/verified/wizard-deploy.png)

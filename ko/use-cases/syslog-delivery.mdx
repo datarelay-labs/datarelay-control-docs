@@ -7,6 +7,11 @@ description: "SYSLOG_UDP Destination을 생성하고 실제 UDP 수신 데이터
 
 **목표:** 가상 이벤트를 독립적인 Syslog UDP 수신기로 전달합니다. Control은 `SYSLOG_TCP`, `SYSLOG_TLS`도 제공하지만 이 실습은 UDP만 검증합니다.
 
+## 적용 순서
+
+이 사례는 이미 구성된 Connector·Destination·Stream을 전제로 합니다. 아직 생성하지 않았다면 [커넥터별 수집 가이드](/ko/use-cases/index)에서 먼저 수집 Source를 설정하세요. 이후 이 페이지의 구체적인 단계를 수행하고 **실제 Logs와 Destination/격리 기록**을 검증합니다. 화면 캡처는 기존 테스트 증빙으로, 실제 결과를 대신하지 않습니다.
+
+
 ## 1. 실습용 Syslog 수신기 실행
 
 Control 서버에서 접근 가능한 **테스트 호스트**에서 다음 Python 기본 라이브러리 코드로 UDP 포트 5514를 수신합니다.

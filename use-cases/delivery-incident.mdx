@@ -7,6 +7,17 @@ description: "Use a controlled HTTP 503, inspect Route evidence, and prove recov
 
 **Goal:** reproduce an isolated Destination error, locate its cause in Control, restore the receiver, and verify new successful delivery.
 
+## When to use this scenario
+
+This scenario builds on an existing Connector, Destination and Stream. If you have not configured a Source yet, start from the [connector-specific collection guides](/use-cases/index). Follow the concrete steps below and verify **actual Logs and Destination/quarantine evidence**. Existing test screenshots are illustrative, not runtime proof.
+
+
+## Product UI reference (existing validation captures)
+
+These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
+
+![Dashboard — existing Control UI test capture](/images/screenshots/verified/dashboard-overview.png)
+
 ## Starting state
 
 Complete [Webhook → first delivered event](/use-cases/webhook-first-flow). The test receiver on port **9011** must have already returned HTTP 200 and recorded a successful event. Do not perform fault injection against a production Destination.
@@ -68,9 +79,3 @@ A failover Destination may be configured through Route Delivery settings where s
 - **Analytics deep link loses filter:** current development E2E recorded a redirect to the generic Dashboard; use explicit Logs filters instead ([issue #413](https://github.com/datarelay-labs/datarelay-control/issues/413)).
 
 **Related:** [Logs and exports](/use-cases/logs-audit).
-
-## Product UI reference (existing validation captures)
-
-These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
-
-![Dashboard — existing Control UI test capture](/images/screenshots/verified/dashboard-overview.png)
