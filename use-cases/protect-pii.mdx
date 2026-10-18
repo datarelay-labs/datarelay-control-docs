@@ -7,6 +7,19 @@ description: "Configure separate per-destination data protection rules without d
 
 **Goal:** an internal Destination may receive an email under an explicit audit-only rule, while an external Destination receives a masked value. Use **synthetic** data only.
 
+## When to use this scenario
+
+This scenario builds on an existing Connector, Destination and Stream. If you have not configured a Source yet, start from the [connector-specific collection guides](/use-cases/index). Follow the concrete steps below and verify **actual Logs and Destination/quarantine evidence**. Existing test screenshots are illustrative, not runtime proof.
+
+
+## Product UI reference (existing validation captures)
+
+These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
+
+![Protection persisted — existing Control UI test capture](/images/screenshots/verified/route-protection.png)
+
+![Transform add field — existing Control UI test capture](/images/screenshots/verified/transform-add-field.png)
+
 ## Starting state
 
 Complete [Two destinations](/use-cases/multi-destination) with both Routes working. Make sure the sampled event actually contains `user.email` (or choose the equivalent field path displayed in your Union Schema).
@@ -57,11 +70,3 @@ Audit Only preserves the original value. Do not use it for real regulated person
 - `409 STREAM_STALE_WRITE` during staged Save: this is a known, reproduced development issue in [Control #413](https://github.com/datarelay-labs/datarelay-control/issues/413); preserve the draft, avoid claiming it persisted, and use the verified Route editor only where that operation succeeds.
 
 **Related:** [Schema changes](/use-cases/schema-change), [Governance](/governance/overview).
-
-## Product UI reference (existing validation captures)
-
-These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
-
-![Protection persisted — existing Control UI test capture](/images/screenshots/verified/route-protection.png)
-
-![Transform add field — existing Control UI test capture](/images/screenshots/verified/transform-add-field.png)

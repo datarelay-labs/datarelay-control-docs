@@ -11,6 +11,11 @@ description: "Review package trust, install a supported declarative integration,
 Marketplace lifecycle, signing, external registry, and AI Builder capabilities are part of the **current development branch**, not independently established as an immutable GA feature set. UI actions depend on deployed version, role and integration support. If a package action is absent, use a currently built-in Connector; do not assume the feature is available in your release.
 </Warning>
 
+## When to use this scenario
+
+This scenario builds on an existing Connector, Destination and Stream. If you have not configured a Source yet, start from the [connector-specific collection guides](/use-cases/index). Follow the concrete steps below and verify **actual Logs and Destination/quarantine evidence**. Existing test screenshots are illustrative, not runtime proof.
+
+
 ## 1. Select a real package
 
 1. Open **Connectors** (`/connectors`) and any **Marketplace / Browse Integrations** entry exposed by your deployment. Administrative package/registry functions may also appear under **Administration → Connector Catalog** (`/admin/connector-catalog`).

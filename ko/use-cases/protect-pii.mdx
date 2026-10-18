@@ -7,6 +7,19 @@ description: "같은 이벤트라도 목적지별로 다른 Data Protection 정�
 
 **목표:** 내부 Destination에는 명시적인 Audit Only 정책을, 외부 Destination에는 Mask 정책을 적용합니다. 실습은 실제 개인정보가 아닌 **가상 데이터**로 진행합니다.
 
+## 적용 순서
+
+이 사례는 이미 구성된 Connector·Destination·Stream을 전제로 합니다. 아직 생성하지 않았다면 [커넥터별 수집 가이드](/ko/use-cases/index)에서 먼저 수집 Source를 설정하세요. 이후 이 페이지의 구체적인 단계를 수행하고 **실제 Logs와 Destination/격리 기록**을 검증합니다. 화면 캡처는 기존 테스트 증빙으로, 실제 결과를 대신하지 않습니다.
+
+
+## 제품 화면 참고 (기존 검증 캡처)
+
+아래 이미지는 실제 Control 테스트에서 촬영된 기존 화면입니다. 최신 배포 UI와 다를 수 있으며 실제 데이터 전송 성공을 증명하지 않습니다.
+
+![Protection persisted — existing Control UI test capture](/images/screenshots/verified/route-protection.png)
+
+![Transform add field — existing Control UI test capture](/images/screenshots/verified/transform-add-field.png)
+
 ## 사전 구성
 
 [두 Destination에 전송하기](/ko/use-cases/multi-destination)가 성공한 상태에서 시작합니다. Sample에 `user.email`이 실제로 존재하는지 먼저 확인합니다.
@@ -58,11 +71,3 @@ description: "같은 이벤트라도 목적지별로 다른 Data Protection 정�
 - 저장 시 `409 STREAM_STALE_WRITE`: [Control #413](https://github.com/datarelay-labs/datarelay-control/issues/413)에서 재현된 개발 문제입니다. 저장되지 않은 Draft를 적용 완료로 간주하지 말고, 실제로 성공하는 Route Edit 경로에서만 재검증합니다.
 
 **관련:** [Schema 변경](/ko/use-cases/schema-change), [Governance](/ko/governance/overview).
-
-## 제품 화면 참고 (기존 검증 캡처)
-
-아래 이미지는 실제 Control 테스트에서 촬영된 기존 화면입니다. 최신 배포 UI와 다를 수 있으며 실제 데이터 전송 성공을 증명하지 않습니다.
-
-![Protection persisted — existing Control UI test capture](/images/screenshots/verified/route-protection.png)
-
-![Transform add field — existing Control UI test capture](/images/screenshots/verified/transform-add-field.png)

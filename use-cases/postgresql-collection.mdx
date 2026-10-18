@@ -7,41 +7,32 @@ description: "Configure a read-only database Connector, query events, and verify
 
 **Goal:** use the implemented **Database query (PostgreSQL)** Connector to read a controlled table and send events to an HTTP Destination. This requires a test PostgreSQL database owned by you.
 
-## Before you start: collect PostgreSQL integration requirements
+## End-to-end workflow and acceptance
 
-1. **Read the vendor integration/API guide:** obtain host, port, DB/schema/table, read-only SELECT user, SSL certificate, incremental ID/timestamp semantics. Confirm actual endpoint, auth, pagination and limits from official documentation.
-2. **Prepare access:** least-privilege credentials, network/TLS access from Control, and a sanitized representative response. Never paste secrets into ChatGPT.
-3. **Understand records:** 2–5 redacted examples, event root, timestamps, unique IDs, cursor and duplicate-handling rules.
-4. **Prepare the Destination:** actual receiver URL/IP, port, protocol, TLS/auth and independent receipt method.
-5. **Ask ChatGPT when uncertain:** provide public vendor documentation and redacted examples; request a checklist of Connector inputs, request/pagination, record root, checkpoint candidates and missing facts. Verify every answer against the vendor guide and Run Test.
+1. **Prepare requirements:** consult the vendor's official API/integration guide for endpoint, authentication, least-privilege scope, pagination/checkpoint and sample response. Obtain sanitized test events and actual Destination connectivity information.
+2. **Use ChatGPT for unknowns:** supply public documentation and redacted samples; request a checklist of Connector inputs, request parameters, event root, timestamp/ID, cursor and unknowns. **Never share secrets.** Validate the response with the vendor guide and Run Test.
+3. **Create Connector:** Connectors → Create Connector, choose this page's source type, enter real connection/auth details, save and test connectivity.
+4. **Create Destination:** Destinations → Create, choose SYSLOG_UDP/TCP/TLS or WEBHOOK_POST, and configure the actual receiver's host/port/URL, TLS and authentication.
+5. **Create Stream:** Streams → Create → Connect, choose the saved Connector and configure source collection/request settings.
+6. **Confirm samples and schema:** Sample & Record Selection → Run Test; verify extracted records, Record Root, Union Schema, pagination and checkpoint.
+7. **Process events:** select Destination/Route; configure Mapping, timestamp, enrichment, Masking/Drop/Quarantine in Route Processing. Use Tokenization **only if the deployed product supports it**. Verify effective Route state and actual output.
+8. **Deploy and prove delivery:** resolve readiness findings, start the Stream, and correlate Run ID, Route Logs and the **independent Destination receipt**. All three are required for PASS.
+9. **Diagnose:** for connection/auth check API scope, TLS, network and 429; for zero records check record root/pagination; for failed delivery follow [Delivery Incident](/use-cases/delivery-incident); for changed fields follow [Schema Drift](/use-cases/schema-change).
 
 ### Suggested ChatGPT prompt
 
-> I am configuring DataRelay Control's Database query (PostgreSQL) Connector. Using only the public API documentation and sanitized examples below, identify required connection/authentication fields, requests and pagination, event root, timestamp/ID checkpoint candidates, security considerations and verification. Mark anything not documented as 'needs confirmation'. Do not invent API paths or credentials.
+> I want to collect this vendor's logs using DataRelay Control. Based only on the public API guide and redacted JSON sample below, list required Connector connection/auth fields, API request/pagination, event root, timestamp/ID/checkpoint, mapping and sensitive-field protection, and failure diagnostics. Mark undocumented information 'needs confirmation' rather than inventing values.
 
-## Follow the complete operator workflow
 
-1. **Create Connector:** Connectors → Create Connector → **Database query (PostgreSQL)**. Enter Database host/name/username, SSL mode, read-only query. Save and run the available connection test.
-2. **Create Destination:** Destinations → Create; select SYSLOG_UDP/TCP/TLS or WEBHOOK_POST as appropriate and enter the actual receiver's host/port/URL, TLS and auth. Prefer a controlled test sink first.
-3. **Create Stream:** Streams → Create → **Connect**, select the saved Connector and set source request/file/query parameters.
-4. **Sample & Record Selection:** Run Test, inspect real records, confirm record root, Union Schema, checkpoint, pagination and deduplication.
-5. **Destinations:** select the saved Destination; confirm the corresponding Route exists.
-6. **Route Processing:** configure field Mapping/Transform, timestamp normalization and enrichment. For sensitive fields select Mask, Remove/Drop, or **Tokenize only when the deployed version exposes and supports it**; configure Quarantine/Block when appropriate. Verify Inherit/Override and Effective Status, not only a draft preview.
-7. **Deploy and run:** resolve readiness errors, deploy and explicitly start/enable the Stream when required.
-8. **Prove delivery:** query preview, row counts, cursor/tie-breaker and destination receipt. Match exact Run ID, Route delivery log and independent Destination receipt.
+## Product UI reference (existing validation captures)
 
-### Troubleshooting and schema drift
+These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
 
-- **Connection/auth:** inspect DNS, firewall, TLS, token scope/expiry, 401/403/429 and rate limits.
-- **Zero records:** inspect actual response envelope, record root, pagination and source format.
-- **Delivery failure:** follow [Delivery incident response](/use-cases/delivery-incident) from Streams → Routes → Logs.
-- **New or changed fields:** inspect Union Schema Observed versus Confirmed Drift, unknown-field policy and effective Route override; follow [Schema change](/use-cases/schema-change).
-- **Protection not applied:** verify supported Mask/Tokenize action, saved rule, effective status and actual receiver payload. A preview is not proof.
+![Connect step — existing Control UI test capture](/images/screenshots/verified/wizard-connect.png)
 
-<Note>
-Only version-verified, authentic product screenshots will be used. Until authenticated internal captures are available, this guide deliberately avoids mock UI images.
-</Note>
+![Sample confirmation — existing Control UI test capture](/images/screenshots/verified/wizard-sample-confirmation.png)
 
+![Stream created — existing Control UI test capture](/images/screenshots/verified/wizard-deploy.png)
 
 ## 1. Prepare the test table
 
@@ -99,13 +90,3 @@ ORDER BY occurred_at, id
 - Database supports something other than PostgreSQL: the documented runtime is PostgreSQL-centric; **do not claim another engine is supported without source/fixture proof**.
 
 **Related:** [HTTP API polling](/use-cases/http-api), [Schema drift](/use-cases/schema-change).
-
-## Product UI reference (existing validation captures)
-
-These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
-
-![Connect step — existing Control UI test capture](/images/screenshots/verified/wizard-connect.png)
-
-![Sample confirmation — existing Control UI test capture](/images/screenshots/verified/wizard-sample-confirmation.png)
-
-![Stream created — existing Control UI test capture](/images/screenshots/verified/wizard-deploy.png)

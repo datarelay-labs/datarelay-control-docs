@@ -7,6 +7,19 @@ description: "의심 이벤트를 격리하고 조사 후 허가된 작업을 �
 
 **목표:** 정책에 걸린 가상 이벤트가 Destination에 전달되지 않도록 격리하고, 운영자가 검토해 처리한 결과까지 확인합니다.
 
+## 적용 순서
+
+이 사례는 이미 구성된 Connector·Destination·Stream을 전제로 합니다. 아직 생성하지 않았다면 [커넥터별 수집 가이드](/ko/use-cases/index)에서 먼저 수집 Source를 설정하세요. 이후 이 페이지의 구체적인 단계를 수행하고 **실제 Logs와 Destination/격리 기록**을 검증합니다. 화면 캡처는 기존 테스트 증빙으로, 실제 결과를 대신하지 않습니다.
+
+
+## 제품 화면 참고 (기존 검증 캡처)
+
+아래 이미지는 실제 Control 테스트에서 촬영된 기존 화면입니다. 최신 배포 UI와 다를 수 있으며 실제 데이터 전송 성공을 증명하지 않습니다.
+
+![Protection persisted — existing Control UI test capture](/images/screenshots/verified/route-protection.png)
+
+![Transform add field — existing Control UI test capture](/images/screenshots/verified/transform-add-field.png)
+
 ## 사전 조건
 
 - [기본 전송](/ko/use-cases/webhook-first-flow)이 가능한 Stream/Route/Destination
@@ -61,11 +74,3 @@ Release와 Replay는 실제 전달 상태를 변경하거나 이미 전송된 �
 - 중복 우려: Event ID와 과거 전송 기록을 비교한 후 추가 조치 결정
 
 **관련:** [Governance](/ko/governance/overview), [전송 장애 대응](/ko/use-cases/delivery-incident).
-
-## 제품 화면 참고 (기존 검증 캡처)
-
-아래 이미지는 실제 Control 테스트에서 촬영된 기존 화면입니다. 최신 배포 UI와 다를 수 있으며 실제 데이터 전송 성공을 증명하지 않습니다.
-
-![Protection persisted — existing Control UI test capture](/images/screenshots/verified/route-protection.png)
-
-![Transform add field — existing Control UI test capture](/images/screenshots/verified/transform-add-field.png)

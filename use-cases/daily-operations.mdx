@@ -7,6 +7,17 @@ description: "A repeatable operator workflow for dashboard health, Stream/Route 
 
 **Goal:** assess whether critical business data is arriving and being delivered, and identify exactly which Stream/Route requires attention.
 
+## When to use this scenario
+
+This scenario builds on an existing Connector, Destination and Stream. If you have not configured a Source yet, start from the [connector-specific collection guides](/use-cases/index). Follow the concrete steps below and verify **actual Logs and Destination/quarantine evidence**. Existing test screenshots are illustrative, not runtime proof.
+
+
+## Product UI reference (existing validation captures)
+
+These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
+
+![Dashboard — existing Control UI test capture](/images/screenshots/verified/dashboard-overview.png)
+
 ## Before your shift
 
 Know the Stream groups/products you own and the expected incoming event volume/period. Use a Viewer account for observation where possible; edit/Replay actions require authorized roles.
@@ -43,9 +54,3 @@ Record: date/time window, Stream group, affected Stream/Route/Destination, error
 **PASS:** every flagged critical data flow has a verified healthy state or a documented, owned incident with supporting Logs. Do not silence/disable alerts merely to make a dashboard green.
 
 **Related:** [Logs evidence](/use-cases/logs-audit), [Schema changes](/use-cases/schema-change), [Route processing](/processing/route-processing).
-
-## Product UI reference (existing validation captures)
-
-These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
-
-![Dashboard — existing Control UI test capture](/images/screenshots/verified/dashboard-overview.png)

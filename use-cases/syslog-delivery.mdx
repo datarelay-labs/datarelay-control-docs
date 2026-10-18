@@ -7,6 +7,11 @@ description: "Create a SYSLOG_UDP Destination, route a test event, and verify th
 
 **Goal:** send one synthetic event to an independently monitored Syslog UDP listener. SYSLOG_TCP and SYSLOG_TLS are available as other Destination types, but this walkthrough deliberately exercises UDP only.
 
+## When to use this scenario
+
+This scenario builds on an existing Connector, Destination and Stream. If you have not configured a Source yet, start from the [connector-specific collection guides](/use-cases/index). Follow the concrete steps below and verify **actual Logs and Destination/quarantine evidence**. Existing test screenshots are illustrative, not runtime proof.
+
+
 ## 1. Prepare the receiver
 
 Run this Python standard-library listener **on a test host reachable by the Control server**:

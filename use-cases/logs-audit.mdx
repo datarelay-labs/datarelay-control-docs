@@ -7,6 +7,17 @@ description: "Filter Logs by exact Stream/Route, save a local view, and export m
 
 **Goal:** prepare a reproducible evidence set for a delivery incident without confusing aggregate charts with a specific event's outcome.
 
+## When to use this scenario
+
+This scenario builds on an existing Connector, Destination and Stream. If you have not configured a Source yet, start from the [connector-specific collection guides](/use-cases/index). Follow the concrete steps below and verify **actual Logs and Destination/quarantine evidence**. Existing test screenshots are illustrative, not runtime proof.
+
+
+## Product UI reference (existing validation captures)
+
+These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
+
+![Dashboard — existing Control UI test capture](/images/screenshots/verified/dashboard-overview.png)
+
 ## 1. Open and scope Logs
 
 1. Open **Logs** (`/logs`).
@@ -51,9 +62,3 @@ At the audited implementation the saved-search snapshots use **browser localStor
 - An old log URL shows 404: open `/logs` and reapply the known Stream/Route filters.
 
 **Related:** [Delivery incident](/use-cases/delivery-incident), [Quarantine](/use-cases/quarantine-replay).
-
-## Product UI reference (existing validation captures)
-
-These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
-
-![Dashboard — existing Control UI test capture](/images/screenshots/verified/dashboard-overview.png)
