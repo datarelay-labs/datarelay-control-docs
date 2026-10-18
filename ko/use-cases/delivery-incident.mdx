@@ -7,16 +7,15 @@ description: "HTTP 503 장애를 안전하게 재현하고 Route 실패 원인 �
 
 **목표:** 테스트 Destination을 HTTP 503으로 만들어 실제 실패 로그를 확인하고, 수신기를 복구하여 정상 전달을 증명합니다.
 
+<Note>
+**화면 버전:** 표시된 이미지는 과거 Control UI 테스트 캡처입니다. 현재 제품의 기본 5단계 순서(Connect → Sample & Record Selection → Destinations → Route Processing → Deploy)를 우선하세요. [번호별 화면 가이드](/ko/use-cases/screen-walkthrough)에서 차이를 설명합니다.
+</Note>
+
 ## 적용 순서
 
 이 사례는 이미 구성된 Connector·Destination·Stream을 전제로 합니다. 아직 생성하지 않았다면 [커넥터별 수집 가이드](/ko/use-cases/index)에서 먼저 수집 Source를 설정하세요. 이후 이 페이지의 구체적인 단계를 수행하고 **실제 Logs와 Destination/격리 기록**을 검증합니다. 화면 캡처는 기존 테스트 증빙으로, 실제 결과를 대신하지 않습니다.
 
 
-## 제품 화면 참고 (기존 검증 캡처)
-
-아래 이미지는 실제 Control 테스트에서 촬영된 기존 화면입니다. 최신 배포 UI와 다를 수 있으며 실제 데이터 전송 성공을 증명하지 않습니다.
-
-![Dashboard — existing Control UI test capture](/images/screenshots/verified/dashboard-overview.png)
 
 ## 사전 조건
 
@@ -49,6 +48,10 @@ curl --fail-with-body -X POST "$CONTROL_RECEIVER_URL" \
 4. 실패 항목의 Detail을 열고 **Run ID, Route ID, Stage, HTTP 503/오류, Retry/Failure Policy, 실패 시각**을 기록합니다.
 5. 지원되는 Stream Runtime/Checkpoint 화면에서 미처리 상태를 확인합니다. Ingest 성공만으로 Checkpoint가 진행되었다고 단정하지 않습니다.
 
+![dashboard-triage — numbered Control historical UI capture](/images/screenshots/annotated/dashboard-triage.webp)
+
+*그림 1. **Dashboard에서 장애 Stream 추적 시작.** ① 조회 기간을 설정하고 ② Health의 Critical/Warning을 확인한 다음 ③ Recent Alerts를 열어 영향 범위를 찾습니다. 근본 원인은 Streams·Routes·Logs에서 확인합니다.*
+
 ## 3. 수신기 복구
 
 1. 실패 응답 수신기를 종료합니다.
@@ -79,11 +82,3 @@ Route Delivery 설정의 Failover 구성을 사용하는 경우에도, 하나의
 - Analytics 링크의 필터가 사라짐: 현재 개발 E2E에서 일반 Dashboard로 Redirect된 문제가 있으므로 Logs에서 직접 필터링합니다. [#413](https://github.com/datarelay-labs/datarelay-control/issues/413)
 
 **관련:** [Logs 증빙](/ko/use-cases/logs-audit).
-
-## 추가 화면 예시 — 실제 과거 UI 테스트 캡처
-
-다음 이미지는 Control의 과거 Playwright 검증 화면입니다. 최신 UI와 다를 수 있으며, 연결/전송 성공 증빙이 아닙니다. 각 설정은 위 절차와 현재 제품 UI를 기준으로 확인하세요.
-
-![Control UI test capture: 06-api-failure-blocks-transform.png](/images/screenshots/verified/06-api-failure-blocks-transform.png)
-
-![Control UI test capture: 08-deploy-blocked-after-api-failure.png](/images/screenshots/verified/08-deploy-blocked-after-api-failure.png)

@@ -7,6 +7,10 @@ description: "Configure API polling, sample extraction, pagination and checkpoin
 
 **Goal:** collect a real vendor API's events through an existing HTTP API Connector and deliver them through a normal Stream/Route.
 
+<Note>
+**Screen version:** The numbered images are historical Control UI test captures. Follow the current five-step flow (Connect → Sample & Record Selection → Destinations → Route Processing → Deploy), not older step ordering. See the [numbered screenshot guide](/use-cases/screen-walkthrough).
+</Note>
+
 ## End-to-end workflow and acceptance
 
 1. **Prepare requirements:** consult the vendor's official API/integration guide for endpoint, authentication, least-privilege scope, pagination/checkpoint and sample response. Obtain sanitized test events and actual Destination connectivity information.
@@ -24,15 +28,6 @@ description: "Configure API polling, sample extraction, pagination and checkpoin
 > I want to collect this vendor's logs using DataRelay Control. Based only on the public API guide and redacted JSON sample below, list required Connector connection/auth fields, API request/pagination, event root, timestamp/ID/checkpoint, mapping and sensitive-field protection, and failure diagnostics. Mark undocumented information 'needs confirmation' rather than inventing values.
 
 
-## Product UI reference (existing validation captures)
-
-These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
-
-![Connect step — existing Control UI test capture](/images/screenshots/verified/wizard-connect.png)
-
-![Sample confirmation — existing Control UI test capture](/images/screenshots/verified/wizard-sample-confirmation.png)
-
-![Stream created — existing Control UI test capture](/images/screenshots/verified/wizard-deploy.png)
 
 ## Required input from your API owner
 
@@ -62,12 +57,35 @@ Have an **actual reachable** base URL, API path and method, auth scheme, a sanit
 5. Review the Union Schema: required fields, rarely appearing fields, and sensitive-field suggestions. The UI may suggest a record or checkpoint path; **you must confirm it**.
 6. Configure checkpoint mode and source field using the vendor's ordering semantics. If no reliable cursor exists, use the supported collection method rather than inventing an incremental checkpoint.
 
+![select-connector — numbered Control historical UI capture](/images/screenshots/annotated/select-connector.webp)
+
+*Figure 1. **Selecting an existing Connector.** ① Select your saved Connector (Generic REST is a test example). ② Continue to Sample. The Connector tab is already active.*
+
+
+![run-test — numbered Control historical UI capture](/images/screenshots/annotated/run-test.webp)
+
+*Figure 2. **Testing collection and record count.** ① Run Test → ② verify HTTP status and extracted record count → ③ open Record Selection. An HTTP success is not proof of Destination delivery.*
+
+
+![record-selection — numbered Control historical UI capture](/images/screenshots/annotated/record-selection.webp)
+
+*Figure 3. **Choosing record path and checkpoint.** ① Review the suggested Record Path, ② inspect actual fields in JSON Tree, ③ select the Checkpoint Field. This capture shows the not-yet-confirmed state.*
+
 ## 3. Route and deploy
 
 1. Select an existing Destination in **Destinations** (create a test sink first using [Lab setup](/use-cases/lab-setup) if necessary).
 2. In **Route Processing**, review Transform mapping, optional Protection, and the output preview.
 3. In **Deploy**, resolve blocking readiness findings. Deploy, start the Stream when required, and record its initial checkpoint.
 4. Allow a real collection run and verify delivery logs **and** actual Destination receipts.
+
+![field-mapping — numbered Control historical UI capture](/images/screenshots/annotated/field-mapping.webp)
+
+*Figure 4. **Mapping an event to output fields.** ① Inspect the source sample, ② configure Field Mapping, ③ compare Final Event Preview. A preview does not prove real delivery.*
+
+
+![stream-actions — numbered Control historical UI capture](/images/screenshots/annotated/stream-actions.webp)
+
+*Figure 5. **Start and verify a newly created Stream.** ① Review Stream creation, ② use Start Stream only when runtime is available, ③ open View logs to verify execution. This historical capture says Runtime API unavailable.*
 
 ## 4. Verify safe incremental collection
 
@@ -90,16 +108,6 @@ Have an **actual reachable** base URL, API path and method, auth scheme, a sanit
 
 **Related:** [Schema change](/use-cases/schema-change), [Delivery incident](/use-cases/delivery-incident).
 
-## Additional UI walkthrough captures — historical tests
+![source-api-error — numbered Control historical UI capture](/images/screenshots/annotated/source-api-error.webp)
 
-These are historical Playwright test captures from Control, not proof of live connector/delivery success. Verify controls against your currently deployed version.
-
-![Control UI test capture: 01-connect-tabs.png](/images/screenshots/verified/01-connect-tabs.png)
-
-![Control UI test capture: 02-sample-tabs-run-test.png](/images/screenshots/verified/02-sample-tabs-run-test.png)
-
-![Control UI test capture: 03-record-selection-tree.png](/images/screenshots/verified/03-record-selection-tree.png)
-
-![Control UI test capture: 04-record-selection-formatted.png](/images/screenshots/verified/04-record-selection-formatted.png)
-
-![Control UI test capture: 05-record-selection-raw-advanced.png](/images/screenshots/verified/05-record-selection-raw-advanced.png)
+*Figure 6. **HTTP 503 during Source API Test.** ① Read the HTTP 503 error, ② repair the source and Retry, ③ do not proceed while blocked. This is a Source API Test failure, not a Destination failure.*

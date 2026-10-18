@@ -7,6 +7,10 @@ description: "Configure a read-only database Connector, query events, and verify
 
 **Goal:** use the implemented **Database query (PostgreSQL)** Connector to read a controlled table and send events to an HTTP Destination. This requires a test PostgreSQL database owned by you.
 
+<Note>
+**Screen version:** The numbered images are historical Control UI test captures. Follow the current five-step flow (Connect → Sample & Record Selection → Destinations → Route Processing → Deploy), not older step ordering. See the [numbered screenshot guide](/use-cases/screen-walkthrough).
+</Note>
+
 ## End-to-end workflow and acceptance
 
 1. **Prepare requirements:** consult the vendor's official API/integration guide for endpoint, authentication, least-privilege scope, pagination/checkpoint and sample response. Obtain sanitized test events and actual Destination connectivity information.
@@ -24,15 +28,6 @@ description: "Configure a read-only database Connector, query events, and verify
 > I want to collect this vendor's logs using DataRelay Control. Based only on the public API guide and redacted JSON sample below, list required Connector connection/auth fields, API request/pagination, event root, timestamp/ID/checkpoint, mapping and sensitive-field protection, and failure diagnostics. Mark undocumented information 'needs confirmation' rather than inventing values.
 
 
-## Product UI reference (existing validation captures)
-
-These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
-
-![Connect step — existing Control UI test capture](/images/screenshots/verified/wizard-connect.png)
-
-![Sample confirmation — existing Control UI test capture](/images/screenshots/verified/wizard-sample-confirmation.png)
-
-![Stream created — existing Control UI test capture](/images/screenshots/verified/wizard-deploy.png)
 
 ## 1. Prepare the test table
 
@@ -73,6 +68,15 @@ ORDER BY occurred_at, id
 4. Review column types and checkpoint strategy. If incremental mode is required, use the documented stable cursor/tie-breaker field; the sample timestamp alone is not sufficient evidence of monotonicity or uniqueness.
 5. Confirm Union Schema and mapped event output.
 
+![run-test — numbered Control historical UI capture](/images/screenshots/annotated/run-test.webp)
+
+*Figure 1. **Testing collection and record count.** ① Run Test → ② verify HTTP status and extracted record count → ③ open Record Selection. An HTTP success is not proof of Destination delivery.*
+
+
+![record-selection — numbered Control historical UI capture](/images/screenshots/annotated/record-selection.webp)
+
+*Figure 2. **Choosing record path and checkpoint.** ① Review the suggested Record Path, ② inspect actual fields in JSON Tree, ③ select the Checkpoint Field. This capture shows the not-yet-confirmed state.*
+
 ## 4. Deploy and verify
 
 1. Choose the [lab HTTP sink](/use-cases/lab-setup) as a `WEBHOOK_POST` Destination.
@@ -82,6 +86,10 @@ ORDER BY occurred_at, id
 
 **PASS:** the authorized read-only query returns the expected row, a Route delivery is recorded, and the sink contains the corresponding event.
 
+![stream-actions — numbered Control historical UI capture](/images/screenshots/annotated/stream-actions.webp)
+
+*Figure 3. **Start and verify a newly created Stream.** ① Review Stream creation, ② use Start Stream only when runtime is available, ③ open View logs to verify execution. This historical capture says Runtime API unavailable.*
+
 ## If it fails
 
 - Authentication: check DB host/port/SSL/readonly account.
@@ -90,17 +98,3 @@ ORDER BY occurred_at, id
 - Database supports something other than PostgreSQL: the documented runtime is PostgreSQL-centric; **do not claim another engine is supported without source/fixture proof**.
 
 **Related:** [HTTP API polling](/use-cases/http-api), [Schema drift](/use-cases/schema-change).
-
-## Additional UI walkthrough captures — historical tests
-
-These are historical Playwright test captures from Control, not proof of live connector/delivery success. Verify controls against your currently deployed version.
-
-![Control UI test capture: 01-connect-tabs.png](/images/screenshots/verified/01-connect-tabs.png)
-
-![Control UI test capture: 02-sample-tabs-run-test.png](/images/screenshots/verified/02-sample-tabs-run-test.png)
-
-![Control UI test capture: 03-record-selection-tree.png](/images/screenshots/verified/03-record-selection-tree.png)
-
-![Control UI test capture: 04-record-selection-formatted.png](/images/screenshots/verified/04-record-selection-formatted.png)
-
-![Control UI test capture: 05-record-selection-raw-advanced.png](/images/screenshots/verified/05-record-selection-raw-advanced.png)

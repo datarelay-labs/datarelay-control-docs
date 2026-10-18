@@ -7,18 +7,15 @@ description: "Inspect Union Schema and select an explicit policy for new or sens
 
 **Goal:** detect a new field in incoming events, distinguish observation from confirmed drift, and decide what to do before allowing deliveries.
 
+<Note>
+**Screen version:** The numbered images are historical Control UI test captures. Follow the current five-step flow (Connect → Sample & Record Selection → Destinations → Route Processing → Deploy), not older step ordering. See the [numbered screenshot guide](/use-cases/screen-walkthrough).
+</Note>
+
 ## When to use this scenario
 
 This scenario builds on an existing Connector, Destination and Stream. If you have not configured a Source yet, start from the [connector-specific collection guides](/use-cases/index). Follow the concrete steps below and verify **actual Logs and Destination/quarantine evidence**. Existing test screenshots are illustrative, not runtime proof.
 
 
-## Product UI reference (existing validation captures)
-
-These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
-
-![Protection persisted — existing Control UI test capture](/images/screenshots/verified/route-protection.png)
-
-![Transform add field — existing Control UI test capture](/images/screenshots/verified/transform-add-field.png)
 
 ## 1. Start with known events
 
@@ -29,6 +26,10 @@ Create a Stream using [the HTTP or Webhook guide](/use-cases/webhook-first-flow)
 ```
 
 In **Sample & Record Selection**, confirm **Record Selection** and **Union Schema**. The observed schema combines fields across the selected events; it is not limited to one arbitrary sample.
+
+![record-selection — numbered Control historical UI capture](/images/screenshots/annotated/record-selection.webp)
+
+*Figure 1. **Choosing record path and checkpoint.** ① Review the suggested Record Path, ② inspect actual fields in JSON Tree, ③ select the Checkpoint Field. This capture shows the not-yet-confirmed state.*
 
 ## 2. Send a changed event
 
@@ -62,11 +63,3 @@ Send a second changed event with a unique ID. Inspect **Logs**, Stream/Route det
 - Field passes through unexpectedly: confirm the rule was saved and applies to the effective Route, not just a draft.
 
 **Related:** [Mask by Route](/use-cases/protect-pii), [Quarantine review](/use-cases/quarantine-replay).
-
-## Additional UI walkthrough captures — historical tests
-
-These are historical Playwright test captures from Control, not proof of live connector/delivery success. Verify controls against your currently deployed version.
-
-![Control UI test capture: transform-step-screenshot.png](/images/screenshots/verified/transform-step-screenshot.png)
-
-![Control UI test capture: 05-before-confirmation.png](/images/screenshots/verified/05-before-confirmation.png)

@@ -12,13 +12,6 @@ description: "Hold a synthetic event, inspect the investigation record, then per
 This scenario builds on an existing Connector, Destination and Stream. If you have not configured a Source yet, start from the [connector-specific collection guides](/use-cases/index). Follow the concrete steps below and verify **actual Logs and Destination/quarantine evidence**. Existing test screenshots are illustrative, not runtime proof.
 
 
-## Product UI reference (existing validation captures)
-
-These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
-
-![Protection persisted — existing Control UI test capture](/images/screenshots/verified/route-protection.png)
-
-![Transform add field — existing Control UI test capture](/images/screenshots/verified/transform-add-field.png)
 
 ## Before you begin
 
@@ -74,11 +67,3 @@ Release/Replay can change downstream state or duplicate a previously delivered e
 - **Duplicate risk:** correlate by event ID before taking further action.
 
 **Related:** [Governance](/governance/overview), [Delivery incident](/use-cases/delivery-incident).
-
-## Additional UI walkthrough captures — historical tests
-
-These are historical Playwright test captures from Control, not proof of live connector/delivery success. Verify controls against your currently deployed version.
-
-![Control UI test capture: 06-api-failure-blocks-transform.png](/images/screenshots/verified/06-api-failure-blocks-transform.png)
-
-![Control UI test capture: 08-deploy-blocked-after-api-failure.png](/images/screenshots/verified/08-deploy-blocked-after-api-failure.png)

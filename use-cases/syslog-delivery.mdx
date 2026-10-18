@@ -7,6 +7,10 @@ description: "Create a SYSLOG_UDP Destination, route a test event, and verify th
 
 **Goal:** send one synthetic event to an independently monitored Syslog UDP listener. SYSLOG_TCP and SYSLOG_TLS are available as other Destination types, but this walkthrough deliberately exercises UDP only.
 
+<Note>
+**Screen version:** The numbered images are historical Control UI test captures. Follow the current five-step flow (Connect → Sample & Record Selection → Destinations → Route Processing → Deploy), not older step ordering. See the [numbered screenshot guide](/use-cases/screen-walkthrough).
+</Note>
+
 ## When to use this scenario
 
 This scenario builds on an existing Connector, Destination and Stream. If you have not configured a Source yet, start from the [connector-specific collection guides](/use-cases/index). Follow the concrete steps below and verify **actual Logs and Destination/quarantine evidence**. Existing test screenshots are illustrative, not runtime proof.
@@ -44,6 +48,10 @@ Use a firewall to restrict UDP 5514 to the test sender; this listener has no aut
 3. Choose `Lab Syslog UDP` under **Destinations**.
 4. In **Route Processing**, keep a basic Transform, inspect the Route delivery settings and format preview if available.
 5. Resolve blocking **Deploy** findings, save/deploy and enable/start the Stream as needed.
+
+![field-mapping — numbered Control historical UI capture](/images/screenshots/annotated/field-mapping.webp)
+
+*Figure 1. **Mapping an event to output fields.** ① Inspect the source sample, ② configure Field Mapping, ③ compare Final Event Preview. A preview does not prove real delivery.*
 
 ## 4. Send, observe and verify
 

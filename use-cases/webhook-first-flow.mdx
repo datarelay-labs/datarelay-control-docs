@@ -9,6 +9,10 @@ description: "Create a complete Webhook Receiver → Stream → Route → HTTP D
 
 **Requires:** [lab receiver running on port 9011](/use-cases/lab-setup), a Control Operator/Administrator account, and network reachability from Control to the sink.
 
+<Note>
+**Screen version:** The numbered images are historical Control UI test captures. Follow the current five-step flow (Connect → Sample & Record Selection → Destinations → Route Processing → Deploy), not older step ordering. See the [numbered screenshot guide](/use-cases/screen-walkthrough).
+</Note>
+
 ## End-to-end workflow and acceptance
 
 1. **Prepare requirements:** consult the vendor's official API/integration guide for endpoint, authentication, least-privilege scope, pagination/checkpoint and sample response. Obtain sanitized test events and actual Destination connectivity information.
@@ -26,15 +30,6 @@ description: "Create a complete Webhook Receiver → Stream → Route → HTTP D
 > I want to collect this vendor's logs using DataRelay Control. Based only on the public API guide and redacted JSON sample below, list required Connector connection/auth fields, API request/pagination, event root, timestamp/ID/checkpoint, mapping and sensitive-field protection, and failure diagnostics. Mark undocumented information 'needs confirmation' rather than inventing values.
 
 
-## Product UI reference (existing validation captures)
-
-These images are existing captures from Control UI tests. They may differ from the current deployed UI and do not prove successful data delivery.
-
-![Connect step — existing Control UI test capture](/images/screenshots/verified/wizard-connect.png)
-
-![Sample confirmation — existing Control UI test capture](/images/screenshots/verified/wizard-sample-confirmation.png)
-
-![Stream created — existing Control UI test capture](/images/screenshots/verified/wizard-deploy.png)
 
 ## 1. Create the Destination
 
@@ -65,6 +60,10 @@ Opening the Receiver URL in a browser performs a GET request, not a JSON ingest.
 5. **Route Processing:** use inherited/default processing for this initial test; check **Route Processing Preview** and unresolved validation warnings. Mapping preview alone is not delivery proof.
 6. **Deploy:** verify readiness; save/deploy and explicitly start/enable the Stream if the resulting state requires it.
 
+![select-connector — numbered Control historical UI capture](/images/screenshots/annotated/select-connector.webp)
+
+*Figure 1. **Selecting an existing Connector.** ① Select your saved Connector (Generic REST is a test example). ② Continue to Sample. The Connector tab is already active.*
+
 ## 4. Send one event into Control
 
 Copy the generated Receiver URL in the Connector UI and assign it locally, then send:
@@ -87,6 +86,10 @@ The URL above is a placeholder. If **Shared secret header** or **Bearer token** 
 
 **PASS =** event received by HTTP sink **and** correlated successful Route delivery evidence. A 2xx ingest response alone is **not** the acceptance criterion.
 
+![stream-actions — numbered Control historical UI capture](/images/screenshots/annotated/stream-actions.webp)
+
+*Figure 2. **Start and verify a newly created Stream.** ① Review Stream creation, ② use Start Stream only when runtime is available, ③ open View logs to verify execution. This historical capture says Runtime API unavailable.*
+
 ## If it fails
 
 - **No Receiver URL:** save the Connector and reopen details; do not guess the key.
@@ -96,17 +99,3 @@ The URL above is a placeholder. If **Shared secret header** or **Bearer token** 
 - **HTTP 409 `RUN_ALREADY_ACTIVE`:** another run overlaps; inspect runtime status and retry only after resolving the overlap without creating duplicate events.
 
 **Next:** [send to two destinations](/use-cases/multi-destination).
-
-## Additional UI walkthrough captures — historical tests
-
-These are historical Playwright test captures from Control, not proof of live connector/delivery success. Verify controls against your currently deployed version.
-
-![Control UI test capture: 01-connect-tabs.png](/images/screenshots/verified/01-connect-tabs.png)
-
-![Control UI test capture: 02-sample-tabs-run-test.png](/images/screenshots/verified/02-sample-tabs-run-test.png)
-
-![Control UI test capture: 03-record-selection-tree.png](/images/screenshots/verified/03-record-selection-tree.png)
-
-![Control UI test capture: 04-record-selection-formatted.png](/images/screenshots/verified/04-record-selection-formatted.png)
-
-![Control UI test capture: 05-record-selection-raw-advanced.png](/images/screenshots/verified/05-record-selection-raw-advanced.png)
