@@ -1,0 +1,81 @@
+---
+title: "Prepare a Safe Lab"
+description: "Set up a local test receiver and reproducible synthetic event before trying the workflows."
+---
+
+# Prepare a Safe Lab
+
+**Outcome:** you have one or two observable HTTP destinations and sample JSON without relying on a vendor API. This receiver is a tutorial helper, **not** part of the Control runtime.
+
+## Prerequisites
+
+1. A running Control development/evaluation instance, with permission to create Connectors, Destinations, Streams, and Routes.
+2. Python 3.9+ and `curl` on a test machine reachable by the Control service.
+3. A private testing network. Do not open the unauthenticated receiver to the internet.
+
+For installation, follow [Quick Start](/getting-started/quickstart). Use a dedicated test system and obtain the correct server address before configuring a Destination.
+
+## 1. Start a test receiver
+
+Get the ready-to-run script from [examples/scenario_receiver.py](https://github.com/datarelay-labs/datarelay-control-docs/blob/main/examples/scenario_receiver.py). Clone the documentation repository or save that file as `scenario_receiver.py`.
+
+Run on the same host as the destination listener:
+
+```bash
+python3 scenario_receiver.py --port 9011 --output received-9011.ndjson
+```
+
+It listens at `http://127.0.0.1:9011/sink` by default. To reach it **from a different host or container**, bind only to a test-network IP and set firewall rules accordingly:
+
+```bash
+python3 scenario_receiver.py --bind 192.0.2.10 --port 9011 --output received-9011.ndjson
+```
+
+`192.0.2.10` is a documentation placeholder — substitute an IP actually assigned to your test host. From Control's network namespace, the Destination URL must point to that reachable address, **not automatically to `127.0.0.1`**.
+
+## 2. Verify the receiver independently
+
+```bash
+curl --fail-with-body -X POST http://127.0.0.1:9011/sink \
+  -H 'Content-Type: application/json' \
+  --data '{"id":"receiver-self-test","user":{"email":"lab@example.invalid"},"message":"ready"}'
+cat received-9011.ndjson
+```
+
+Expected: HTTP 200 with `{"accepted": true}` and one NDJSON line containing `receiver-self-test`. If it fails, fix host/port/network reachability **before** debugging Control.
+
+## 3. Prepare a sample for Stream creation
+
+```json
+{
+  "id": "control-lab-001",
+  "event_time": "2026-10-18T00:00:00Z",
+  "user": { "name": "lab-user", "email": "lab@example.invalid" },
+  "severity": "low",
+  "message": "test event"
+}
+```
+
+Use this for the Connector's **Payload preview** and the Wizard's sample when appropriate. The timestamp is synthetic, not a claim of current runtime time.
+
+## 4. Optional: two independent destinations
+
+Start another terminal:
+
+```bash
+python3 scenario_receiver.py --port 9012 --output received-9012.ndjson
+```
+
+Configure two `WEBHOOK_POST` Destinations pointing to the reachable host at ports 9011 and 9012. Both ports must be reachable **from Control**.
+
+## 5. Optional: deterministic failure
+
+Stop the test receiver before changing its response. Then restart it with:
+
+```bash
+python3 scenario_receiver.py --port 9011 --status 503 --output received-9011.ndjson
+```
+
+The receiver returns HTTP 503 and records **no successful payload**; use this only for [Delivery incident response](/use-cases/delivery-incident). Restore `--status 200` to recover. Do not use a production Destination for fault injection.
+
+**Next:** [Webhook → first delivered event](/use-cases/webhook-first-flow).

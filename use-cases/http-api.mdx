@@ -1,0 +1,64 @@
+---
+title: "Collect from an HTTP API"
+description: "Configure API polling, sample extraction, pagination and checkpoints before routing to a Destination."
+---
+
+# Collect from an HTTP API
+
+**Goal:** collect a real vendor API's events through an existing HTTP API Connector and deliver them through a normal Stream/Route.
+
+## Required input from your API owner
+
+Have an **actual reachable** base URL, API path and method, auth scheme, a sanitized representative response, and documentation describing pagination and the event cursor. The example values below are placeholders, not a working public API.
+
+| Input | Example | Where to use |
+| --- | --- | --- |
+| Base URL | `https://vendor.example.invalid` | Connector **Host / Base URL** |
+| Endpoint | `/v1/audit/events` | request path in Connect/Run Test |
+| Auth | API key/Bearer as documented | Credential/auth configuration |
+| Event array | `$.events` | Record Selection, only if response truly uses it |
+| Cursor field | `event_time` | Checkpoint, only if stable and monotonic for this API |
+
+## 1. Register and test the Connector
+
+1. Go to **Connectors → Create Connector** and choose **HTTP API Polling**.
+2. Enter a meaningful **Connector Name** and the real **Host / Base URL**.
+3. Select the actual supported authentication mode; store secrets using the product's credential configuration, not in exported samples or public YAML.
+4. Save; run the Connector connectivity test when supported. Confirm the vendor API, TLS, network, and authorization are correct.
+
+## 2. Choose the collection contract
+
+1. Open `/streams/new`, choose the saved Connector in **Connect**, and enter the actual request path/method/query parameters.
+2. Configure pagination according to vendor documentation (for example page, offset, or cursor); do not assume every endpoint supports the same pagination.
+3. In **Sample & Record Selection → Run Test**, retrieve response data. Inspect HTTP status and actual JSON, not just a green connection indicator.
+4. Switch to **Record Selection**. Select the array/record root that contains the events. If the response is `{"events":[...]}`, `$.events` is a candidate **only if the UI preview confirms the extracted records**.
+5. Review the Union Schema: required fields, rarely appearing fields, and sensitive-field suggestions. The UI may suggest a record or checkpoint path; **you must confirm it**.
+6. Configure checkpoint mode and source field using the vendor's ordering semantics. If no reliable cursor exists, use the supported collection method rather than inventing an incremental checkpoint.
+
+## 3. Route and deploy
+
+1. Select an existing Destination in **Destinations** (create a test sink first using [Lab setup](/use-cases/lab-setup) if necessary).
+2. In **Route Processing**, review Transform mapping, optional Protection, and the output preview.
+3. In **Deploy**, resolve blocking readiness findings. Deploy, start the Stream when required, and record its initial checkpoint.
+4. Allow a real collection run and verify delivery logs **and** actual Destination receipts.
+
+## 4. Verify safe incremental collection
+
+- Record the run ID, extracted event IDs/time range, and checkpoint before the run.
+- Run another collection cycle with no new vendor events. Check for unexpected duplicates; do not rely on a visual preview as a cursor correctness test.
+- Add a new *synthetic* vendor event if the testing API permits it. Confirm extraction, delivery, and checkpoint advance **after** the required successful delivery.
+- If the API uses unstable ordering or non-unique timestamps, resolve its pagination/cursor strategy before production rollout.
+
+## If it fails
+
+| Symptom | Inspect |
+| --- | --- |
+| 401/403 | Credential, auth mode, expired token, vendor permissions |
+| 429 / timeout | Vendor rate limits, backoff, Connector/API Health |
+| Test returns JSON but 0 records | Event array/record root, response envelope, request filters |
+| Records repeat | Cursor/checkpoint and vendor ordering semantics |
+| Records collected but not delivered | Route, Destination, protection/policy outcome, Logs |
+
+**PASS =** a newly collected event is found in the independent Destination and its corresponding Route delivery record; no unexpected checkpoint advance on failed delivery.
+
+**Related:** [Schema change](/use-cases/schema-change), [Delivery incident](/use-cases/delivery-incident).

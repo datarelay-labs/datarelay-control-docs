@@ -1,0 +1,46 @@
+---
+title: "Collect Logs from S3 or MinIO"
+description: "Configure S3 object polling, filter event objects, and verify delivery into a test Destination."
+---
+
+# Collect Logs from S3 or MinIO
+
+**Goal:** read a synthetic event file from an S3-compatible bucket and deliver its records through a Stream.
+
+## 1. Prepare a controlled object
+
+Create a test bucket in MinIO or AWS S3 and upload a file called `security/tutorial.jsonl` containing:
+
+```json
+{"id":"s3-001","message":"object event one","severity":"low"}
+```
+
+Your Control runtime must be able to reach the endpoint. Use non-production access keys with read/list permissions only; avoid embedding them in package files.
+
+## 2. Create the Connector
+
+1. Go to **Connectors → Create Connector → S3 Object Polling (MinIO / AWS-compatible)**.
+2. Enter **Connector Name** = `Lab S3 Events`.
+3. Under **S3 endpoint & bucket**, enter the actual **Endpoint URL**, **Bucket**, and **Region**.
+4. Set **Prefix** = `security/` and **Object key pattern** = `*.jsonl` as a candidate filter. Adjust to your actual object paths.
+5. Enter **Access key** and **Secret key** in protected Connector inputs. For MinIO use path-style addressing where appropriate. Enable HTTPS/SSL with the correct endpoint/certificates in secured environments.
+6. Save and run the supported S3 connectivity/list test. Confirm the object is visible; do not assume a successful credential test implies it matches Prefix/Pattern.
+
+## 3. Create the Stream
+
+1. In `/streams/new`, choose `Lab S3 Events` under **Connect**.
+2. In **Sample & Record Selection**, run a sample test and confirm the event is parsed as an individual JSON record.
+3. Verify Event Root and schema; choose a supported checkpoint/object progression strategy appropriate to the source.
+4. Select the [test HTTP Destination](/use-cases/lab-setup), review Route Processing and Deploy readiness, then start the Stream.
+5. Check **Logs** plus the independent HTTP receiver file for `s3-001`.
+
+**PASS:** the expected object is discovered, a record is extracted, and the test Destination receives the corresponding event.
+
+## If it fails
+
+- Empty listing: verify bucket/Prefix/Object key pattern and read/list authorization.
+- TLS/endpoint failure: inspect actual MinIO/AWS regional URL and runtime network.
+- Object fetched but zero events: check file structure (JSONL vs array/object) and Record Selection.
+- Unexpected repeated files: inspect checkpoint/object identity and retry behavior.
+
+**Related:** [First flow](/use-cases/webhook-first-flow), [Schema change](/use-cases/schema-change).

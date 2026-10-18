@@ -1,0 +1,51 @@
+---
+title: "Schema 변경 확인 및 대응"
+description: "새 필드의 관찰·Drift 여부를 확인하고 Pass Through·Review·Quarantine 정책을 검증합니다."
+---
+
+# API 응답에 새 필드가 추가됐을 때
+
+**목표:** 기존 데이터에 없던 필드를 감지하고, 일반 필드와 민감 필드에 서로 다른 처리 정책을 명시적으로 적용합니다.
+
+## 1. 기존 데이터로 Baseline 확인
+
+[첫 Webhook 전송](/ko/use-cases/webhook-first-flow) 또는 API 수집 실습을 완료합니다. 다음과 같은 가상 이벤트 여러 건을 입력합니다.
+
+```json
+{"id":"schema-001","user":{"name":"alice"},"severity":"low"}
+```
+
+**Sample & Record Selection → Record Selection**에서 Event Root를 확정하고 Union Schema를 확인합니다. Union Schema는 선택한 이벤트 집합의 필드를 종합한 것이며, 한 개의 샘플 JSON만을 의미하지 않습니다.
+
+## 2. 변경된 이벤트 추가
+
+같은 Source로 아래 이벤트를 전송합니다.
+
+```json
+{"id":"schema-002","user":{"name":"alice","email":"lab@example.invalid"},"severity":"low","custom_flag":true}
+```
+
+샘플 재수집 또는 지원되는 런타임/Schema 화면에서 **새 필드 경로와 출현 빈도**를 확인합니다. 한 번 새 필드가 나왔다고 곧바로 **Confirmed Drift**로 판단하지 않습니다. Observed와 Confirmed 상태를 구분합니다.
+
+## 3. 처리 정책 선택
+
+1. **Stream Edit → Route Processing → Protection / Schema Drift Policy**(또는 해당 Route Edit)로 이동합니다.
+2. 일반 Unknown Field의 기본 동작 **Pass Through**를 확인합니다. 필요할 때만 **Require Review** 또는 **Quarantine**을 선택합니다.
+3. 이메일, API Key처럼 민감할 수 있는 필드는 탐지 제안을 검토하고 명시적으로 보호/검토 동작을 선택합니다. **제안은 자동 정책 적용이 아닙니다**.
+4. Stream의 Union Schema Baseline을 모든 Route가 공유하도록 유지하고, 목적지별 차이가 필요할 때만 Route Override를 사용합니다.
+5. 저장 후 Effective 설정과 정책 경고를 확인합니다.
+
+## 4. 실제 결과 확인
+
+새 ID를 가진 변경 이벤트를 다시 전송하여 **Logs**, Stream/Route 상세, Governance 기록, 수신 파일(또는 격리 기록)을 비교합니다.
+
+**완료 조건:** 새 필드가 관측되며, 설정한 정책에 따라 필드 유지·보호·Review·Quarantine 중 실제 동작이 확인됩니다.
+
+## 실패 시
+
+- 새 필드가 없음: 이벤트 수집 여부, Record Root, 다수 Sample 분석 여부 확인
+- 민감도 제안이 없음: 실제 Field Path와 탐지 설정 확인. 제안이 항상 나오는 것은 아닙니다.
+- 이벤트가 사라진 것처럼 보임: **Quarantine, Policy, Logs**를 확인합니다.
+- 정책과 달리 Pass Through: Draft 상태인지 Effective Route에 저장되었는지 확인합니다.
+
+**관련:** [Route별 보호](/ko/use-cases/protect-pii), [Quarantine·Replay](/ko/use-cases/quarantine-replay).

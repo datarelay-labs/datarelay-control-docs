@@ -1,0 +1,46 @@
+---
+title: "SFTP 원격 파일에서 로그 수집"
+description: "SSH Host Key 검증을 유지하면서 원격 파일을 읽고 Stream으로 전달합니다."
+---
+
+# SFTP 서버의 로그 파일을 수집하기
+
+**목표:** 테스트 SFTP 서버의 JSONL 파일을 읽어 Stream/Route로 전달합니다. `SFTP-compatible SCP`는 별도 모드이며 일반적인 구형 SCP Directory Polling과 동일하지 않습니다.
+
+## 1. 원격 파일 준비
+
+1. 테스트용 SSH 서버에 `/srv/control-demo/events.jsonl` 파일을 만들고 다음 한 줄을 저장합니다.
+```json
+{"id":"sftp-001","message":"remote file record","severity":"low"}
+```
+2. 해당 경로에 읽기/목록 권한만 가진 SSH 계정을 만듭니다.
+3. 일반 `sftp` 클라이언트로 접속과 파일 읽기를 먼저 확인합니다.
+4. 서버 SSH Host Key Fingerprint를 확인해 기록합니다. 연결 테스트 때문에 Host Key 검증을 끄지 않습니다.
+
+## 2. Remote File Connector 생성
+
+1. **Connectors → Create Connector → Remote file polling (SFTP / SFTP-compatible SCP mode)**을 선택합니다.
+2. **Connector Name** = `Lab SFTP`, **Protocol** = `sftp`를 입력합니다.
+3. 실제 **Host**, **Port**(보통 22), **Username**을 입력합니다.
+4. 허가된 **Password 또는 Private key**를 설정합니다.
+5. **Known hosts**에 검증한 호스트 키를 구성하고 검증 Policy는 **strict**를 사용합니다.
+6. 제공되는 원격 디렉터리/파일 선택 항목에서 `/srv/control-demo/events.jsonl` 파일을 대상으로 합니다.
+7. 저장한 뒤 지원되는 Remote Connection/List Test로 파일을 조회합니다.
+
+## 3. Stream과 전송
+
+1. `/streams/new`에서 `Lab SFTP` Connector를 선택하고 **Run Test**를 실행합니다.
+2. `sftp-001` 이벤트 레코드가 추출되는지 **Record Selection**에서 확인합니다.
+3. [테스트 Destination](/ko/use-cases/lab-setup)를 지정한 후 Route Processing과 Deploy를 완료합니다.
+4. Stream을 실행하고 **Logs**의 Route 결과와 실제 수신 파일을 비교합니다.
+
+**완료 조건:** SFTP 파일 목록/읽기, 이벤트 추출, 독립 Destination 수신 성공이 일치합니다.
+
+## 실패 시
+
+- Host Key 오류: 실제 Host Fingerprint와 Known hosts를 수정합니다. 비보안 검증으로 우회하지 않습니다.
+- Permission denied: SSH 계정의 디렉터리/파일 읽기 권한 확인
+- 레코드 0건: 파일 인코딩/JSONL 형식/Record Root 확인
+- 이벤트 중복: 파일 Rotation 및 Checkpoint/읽기 위치 확인
+
+**관련:** [S3 수집](/ko/use-cases/s3-object-collection), [전송 장애 대응](/ko/use-cases/delivery-incident).

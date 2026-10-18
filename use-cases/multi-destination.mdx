@@ -1,0 +1,63 @@
+---
+title: "One Stream, Two Destinations"
+description: "Fan out one input to two Destinations and apply a different Transform per Route."
+---
+
+# One Stream, Two Destinations
+
+**Goal:** one incoming event reaches an internal receiver and an external receiver without creating duplicate Streams.
+
+## 1. Prepare the two receivers
+
+Follow [Lab setup](/use-cases/lab-setup), running independent sinks on ports **9011** and **9012**, each with a separate `received-PORT.ndjson` output file. Use actual reachable test-host addresses.
+
+## 2. Create two Destinations
+
+From **Destinations → Create**:
+
+| Field | Internal | External |
+| --- | --- | --- |
+| Name | `Lab Internal` | `Lab External` |
+| Type | `WEBHOOK_POST` | `WEBHOOK_POST` |
+| URL | `http://TEST-HOST:9011/sink` | `http://TEST-HOST:9012/sink` |
+| Payload Mode | Single Event Object | Single Event Object |
+
+Save both. Verify the host name or IP is reachable from the Control service.
+
+## 3. Reuse a single Source
+
+Use the Webhook Receiver Connector from [first flow](/use-cases/webhook-first-flow), or create a new one. Open `/streams/new`; finish **Connect** and **Sample & Record Selection** with a confirmed event.
+
+## 4. Add both Destinations to the same Stream
+
+1. Under **Destinations**, select **Lab Internal** and **Lab External**.
+2. In **Route Processing**, verify that there are **two separate Routes**.
+3. In **Global Processing**, keep common mapping/normalization. The default is to **Inherit Global** settings.
+4. Select the Internal Route; leave Transform as **Inherit Global**.
+5. Select the External Route; turn **Inherit Global** off for **Transform** only. Add a static output field such as `delivery_scope = external` using the available **Add Field / Static** tool.
+6. Inspect the **effective Route preview** for each selected Route. Do not treat a draft Mapping/Enrichment preview as verified Destination delivery.
+7. Leave Delivery parameters associated with their own Route; don't expect Delivery settings to be globally inherited.
+8. **Deploy** and start the Stream if needed.
+
+## 5. Prove independent fan-out
+
+Send one synthetic JSON event to the generated Webhook Receiver URL:
+
+```bash
+curl --fail-with-body -X POST "$CONTROL_RECEIVER_URL" \
+  -H 'Content-Type: application/json' \
+  --data '{"id":"two-route-001","message":"fanout check","severity":"low"}'
+```
+
+Check `received-9011.ndjson` and `received-9012.ndjson`; correlate **the same input ID** with two Route-specific Logs entries. Verify `delivery_scope` appears **only** where the effective external Transform supports it.
+
+**PASS =** two destination receipts, one Stream, two distinct Route outcomes. If one Route fails, record the per-Route result rather than treating the whole event as fully delivered.
+
+## If it fails
+
+- **Only one receipt:** recheck both Destinations and Routes are enabled and tied to the Stream.
+- **Identical payloads when expecting differences:** verify the override was saved, not merely staged or shown in a preview.
+- **Deploy says Intent only / a Route reports Inherited:** open **Routes → Edit**, save the complete supported override, then check Effective Status for **Overridden**.
+- **A second Stream was created for the other sink:** that is not required; consolidate the destinations under one Stream.
+
+**Next:** [mask sensitive fields on one Route](/use-cases/protect-pii).

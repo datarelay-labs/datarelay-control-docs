@@ -67,6 +67,28 @@
             ]
           },
           {
+            "group": "Step-by-step Use Cases",
+            "icon": "book",
+            "pages": [
+              "use-cases/index",
+              "use-cases/lab-setup",
+              "use-cases/webhook-first-flow",
+              "use-cases/http-api",
+              "use-cases/multi-destination",
+              "use-cases/protect-pii",
+              "use-cases/schema-change",
+              "use-cases/quarantine-replay",
+              "use-cases/delivery-incident",
+              "use-cases/logs-audit",
+              "use-cases/marketplace-install",
+              "use-cases/syslog-delivery",
+              "use-cases/postgresql-collection",
+              "use-cases/s3-object-collection",
+              "use-cases/sftp-file-collection",
+              "use-cases/daily-operations"
+            ]
+          },
+          {
             "group": "Administration",
             "icon": "gear",
             "pages": [
@@ -146,6 +168,28 @@
               "ko/getting-started/first-login",
               "ko/getting-started/first-stream",
               "ko/getting-started/data-relay-link"
+            ]
+          },
+          {
+            "group": "활용 사례별 따라하기",
+            "icon": "book",
+            "pages": [
+              "ko/use-cases/index",
+              "ko/use-cases/lab-setup",
+              "ko/use-cases/webhook-first-flow",
+              "ko/use-cases/http-api",
+              "ko/use-cases/multi-destination",
+              "ko/use-cases/protect-pii",
+              "ko/use-cases/schema-change",
+              "ko/use-cases/quarantine-replay",
+              "ko/use-cases/delivery-incident",
+              "ko/use-cases/logs-audit",
+              "ko/use-cases/marketplace-install",
+              "ko/use-cases/syslog-delivery",
+              "ko/use-cases/postgresql-collection",
+              "ko/use-cases/s3-object-collection",
+              "ko/use-cases/sftp-file-collection",
+              "ko/use-cases/daily-operations"
             ]
           },
           {

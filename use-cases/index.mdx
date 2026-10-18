@@ -1,0 +1,59 @@
+---
+title: "Hands-on Use Cases"
+description: "Complete, outcome-oriented DataRelay Control walkthroughs with inputs, UI actions, success checks, and recovery."
+---
+
+# Hands-on Use Cases
+
+Choose what you want to accomplish. Each guide includes a starting state, numbered actions in the actual Control UI, expected evidence, and recovery steps. The guides are for the development implementation in `datarelay-labs/datarelay-control` **main-v2 @ f7ae7b35 (18 October 2026)**, not a blanket assertion that every feature has passed release or browser acceptance.
+
+<Warning>
+Use synthetic events and a non-production environment. Do not paste live tokens, production personally identifiable information, or a private customer's log data into the examples. Actual Control browser E2E is still in progress ([product verification issue #413](https://github.com/datarelay-labs/datarelay-control/issues/413)); a successful preview is not proof of delivery.
+</Warning>
+
+## Start here
+
+1. [Prepare a safe lab](/use-cases/lab-setup) — a runnable Python HTTP receiver, test payload, and connectivity checks.
+2. [Webhook → first delivered event](/use-cases/webhook-first-flow) — create Connector, Destination, Stream, Route, and verify the receiver.
+3. [HTTP API collection](/use-cases/http-api) — configure a real API Connector, sample records, and checkpoint behavior.
+
+## More source and destination integrations
+
+| Integration | Follow this |
+| --- | --- |
+| Security event to a Syslog/UDP collector | [Syslog Destination](/use-cases/syslog-delivery) |
+| Read audit rows from a database | [PostgreSQL collection](/use-cases/postgresql-collection) |
+| Import JSONL logs from object storage | [S3 / MinIO collection](/use-cases/s3-object-collection) |
+| Read event files from a remote SSH server | [SFTP file collection](/use-cases/sftp-file-collection) |
+| Run the daily health/incident workflow | [Daily operations](/use-cases/daily-operations) |
+
+## Delivery and processing scenarios
+
+| Your goal | Follow this |
+| --- | --- |
+| Send the same event to two systems, each with its own fields | [Two destinations, two Routes](/use-cases/multi-destination) |
+| Mask personal data only for an external receiver | [Per-Route sensitive data protection](/use-cases/protect-pii) |
+| Handle added, missing, or modified fields | [Schema change and review](/use-cases/schema-change) |
+| Hold suspicious events and make a review decision | [Quarantine, release, and replay](/use-cases/quarantine-replay) |
+| Investigate a failed delivery and restore the sink | [Delivery incident response](/use-cases/delivery-incident) |
+| Save filters and export incident evidence | [Logs, saved views, and exports](/use-cases/logs-audit) |
+| Adopt a built-in or installed integration | [Marketplace to Stream](/use-cases/marketplace-install) |
+
+## Mental model
+
+```text
+Source / Connector → Stream → Route A → Destination A
+                            └→ Route B → Destination B
+```
+
+**Stream** is the execution unit. A **Route** is the destination-specific processing unit; do not duplicate a Stream just to get different outbound transformations. Work in this order: **Connect → Sample & Record Selection → Destinations → Route Processing → Deploy**.
+
+## Evidence checklist for every scenario
+
+- Connection or Source test shows the expected sample or an explicitly recorded limitation.
+- Deploy shows readiness; warnings are reviewed, not silently ignored.
+- Stream is active and a new run is visible.
+- Each expected Route has a matching delivery log and a receiver-side record (when delivery applies).
+- A failed, quarantined, or blocked event is **not** counted as successful delivery.
+
+See also [First Stream](/getting-started/first-stream), [Route Processing](/processing/route-processing), [Known Limitations](/reference/limitations), and [Korean walkthroughs](/ko/use-cases/index).

@@ -1,0 +1,53 @@
+---
+title: "활용 사례별 실습"
+description: "데이터 수집부터 전송·보호·장애 처리까지 직접 실행할 수 있는 DataRelay Control 실습 매뉴얼입니다."
+---
+
+# 활용 사례별 실습
+
+원하는 결과에 따라 안내서를 선택하세요. 모든 가이드는 **사전 조건 → 실제 화면에서 누를 항목 → 예시 입력 → 성공 확인 → 실패 시 조치** 순서로 작성했습니다. 기준 제품은 `datarelay-labs/datarelay-control` **main-v2 @ f7ae7b35 (2026-10-18)**입니다.
+
+<Warning>
+실습은 비운영 환경에서 가상 이벤트로 진행하세요. 실제 API Token, 고객 개인정보, 운영 로그는 입력하지 마세요. 전체 사용자 브라우저 검증은 [제품 이슈 #413](https://github.com/datarelay-labs/datarelay-control/issues/413)에서 진행 중입니다. Preview 성공만으로 실제 전송 성공을 판단하지 않습니다.
+</Warning>
+
+## 처음 시작하는 사용자
+
+1. [실습 환경 준비](/ko/use-cases/lab-setup): 표준 라이브러리만 사용하는 Python 테스트 수신기와 샘플 데이터를 준비합니다.
+2. [Webhook으로 첫 이벤트 전송](/ko/use-cases/webhook-first-flow): Connector, Destination, Stream, Route를 직접 만들고 수신 결과를 확인합니다.
+3. [외부 HTTP API 수집](/ko/use-cases/http-api): API 연결, 샘플, 이벤트 선택 및 Checkpoint를 설정합니다.
+
+## 수집 방식·연동 제품별 실습
+
+| 업무 | 따라하기 |
+| --- | --- |
+| XDR/SIEM으로 Syslog UDP 전송 | [Syslog Destination](/ko/use-cases/syslog-delivery) |
+| PostgreSQL 테이블에서 이벤트 수집 | [PostgreSQL](/ko/use-cases/postgresql-collection) |
+| AWS S3/MinIO 객체 로그 수집 | [S3·MinIO](/ko/use-cases/s3-object-collection) |
+| SFTP 서버의 JSONL 파일 수집 | [SFTP 원격 파일](/ko/use-cases/sftp-file-collection) |
+| 매일 Dashboard에서 장애 점검 | [일일 운영 점검](/ko/use-cases/daily-operations) |
+
+## 업무 목적별 시나리오
+
+| 구현하려는 업무 | 따라하기 |
+| --- | --- |
+| 하나의 데이터를 서로 다른 두 시스템에 동시에 전송 | [2개 Destination과 Route](/ko/use-cases/multi-destination) |
+| 외부 시스템으로 보낼 때만 이메일 등 개인정보 마스킹 | [Route별 개인정보 보호](/ko/use-cases/protect-pii) |
+| API 응답의 필드가 추가되거나 타입이 변경됨 | [Schema 변경 확인 및 대응](/ko/use-cases/schema-change) |
+| 민감 이벤트를 격리하고 검토한 후 처리 | [Quarantine·Release·Replay](/ko/use-cases/quarantine-replay) |
+| Destination 장애로 전송이 실패함 | [전송 장애 진단과 복구](/ko/use-cases/delivery-incident) |
+| 장애 로그를 필터링·저장·파일로 증빙 | [Logs·Saved View·Export](/ko/use-cases/logs-audit) |
+| 기존 통합 패키지로 Connector 구성 | [Marketplace에서 Stream까지](/ko/use-cases/marketplace-install) |
+
+## 제품 구성과 기본 순서
+
+```text
+Source / Connector → Stream → Route A → Destination A
+                            └→ Route B → Destination B
+```
+
+Stream은 실행 단위, Route는 목적지별 처리 단위입니다. 목적지별로 변환이나 보호 정책이 달라도 Stream을 여러 개 만들 필요가 없습니다.
+
+**Connect → Sample & Record Selection → Destinations → Route Processing → Deploy** 순서로 구성합니다.
+
+모든 실습의 완료 기준은 설정 저장만이 아니라 **실제 Run, Route 전달 로그, 수신 시스템의 데이터**까지 비교하는 것입니다. [첫 Stream](/ko/getting-started/first-stream), [Route Processing](/ko/processing/route-processing), [알려진 제한](/ko/reference/limitations)도 참고하세요.

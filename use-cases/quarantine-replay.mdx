@@ -1,0 +1,63 @@
+---
+title: "Quarantine, Review, and Replay"
+description: "Hold a synthetic event, inspect the investigation record, then perform a permitted action."
+---
+
+# Quarantine, Review, and Replay
+
+**Goal:** prevent an event from reaching a Destination until an operator reviews the policy decision, then track the chosen action.
+
+## Before you begin
+
+- Start from a working Stream and Destination ([first delivery](/use-cases/webhook-first-flow)).
+- Use only synthetic fields, for example `api_key = demo-not-a-secret`.
+- Your role must be authorized for the desired Governance action. Viewer/read-only roles can inspect without release/replay permissions.
+
+## 1. Configure a rule that holds an event
+
+1. Open **Stream Edit → Route Processing → Protection / Policy** for the selected Route.
+2. Choose an existing field such as `api_key` in the sample/observed schema.
+3. Set a suitable protection action and choose event-level **Quarantine** behavior.
+4. Save the complete rule, verify its effective scope and warnings, and deploy the configuration.
+5. Send a uniquely identified synthetic event, such as:
+
+```json
+{"id":"quarantine-001","api_key":"demo-not-a-secret","reason":"hold for review"}
+```
+
+## 2. Find and investigate the held event
+
+1. Open **Governance → Quarantine** (`/governance/quarantine`).
+2. Use the **24h / 7d / 30d** time window and status/severity filters as needed.
+3. Select the quarantined entry to open its investigation detail. Compare event ID, Stream/Route, violation reason, status, and related records.
+4. Check **Logs** for the associated policy/delivery outcome. A quarantined event must not be reported as a successful Destination receipt.
+
+## 3. Choose one permitted action
+
+| Action | Appropriate when | What to verify |
+| --- | --- | --- |
+| **Release** | The event is approved under policy | Release state, checkpoint implications, delivery evidence if applicable |
+| **Discard** | The event must not be forwarded | Discarded state, no receiver-side event |
+| **Replay** | Reprocessing is authorized and safe | Replay record and outcome; check for duplicate downstream events |
+
+1. Select the action shown for your account.
+2. Read the confirmation dialog; **Release may advance Stream checkpoints**.
+3. Confirm once. Record the resulting status, audit entry, and any linked Replay item.
+4. For Replay, verify actual downstream delivery separately. A replay request or queue state is not proof of successful delivery.
+
+<Warning>
+Release/Replay can change downstream state or duplicate a previously delivered event. Only use unique synthetic IDs in this walkthrough, and apply organizational approval for any real data.
+</Warning>
+
+## Completion check
+
+**PASS =** one held event is visible with the correct reason; the authorized operator's selected action is recorded; any actual delivery is corroborated in Route Logs and receiver data. If an action is denied, preserve that evidence — do not bypass RBAC.
+
+## If it fails
+
+- **No Quarantine entry:** check that the policy is effective, the event field/path matches, and the Stream actually ran.
+- **Action disabled/403:** use an authorized Operator/Administrator account; do not bypass permissions.
+- **Replay exists but sink is empty:** investigate failure status, Destination availability, and replay result independently.
+- **Duplicate risk:** correlate by event ID before taking further action.
+
+**Related:** [Governance](/governance/overview), [Delivery incident](/use-cases/delivery-incident).

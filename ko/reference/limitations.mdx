@@ -18,3 +18,7 @@ description: "현재 코드에서 확인되는 운영/기능 경계."
 - DataRelay Link 중앙 관리 프로토콜 미구현
 
 현재 제품 screenshot은 문서 생성 환경에서 live instance를 띄우지 못해 생성하지 않았으며 필요한 capture 목록을 `images/screenshots/README.md`에 기록했습니다.
+
+## 활용 시나리오 실습 (2026-10-18)
+
+[활용 사례별 실습](/ko/use-cases/index)은 현재 구현을 기준으로 작성한 **재현 가능한 절차**이며, 전체 인증 브라우저 E2E 완료를 의미하지 않습니다. [제품 이슈 #413](https://github.com/datarelay-labs/datarelay-control/issues/413)에는 Classification 단계 저장의 `409 STREAM_STALE_WRITE` 오류와 Route Analytics Deep Link의 Scope 손실이 기록되어 있습니다. Route Effective Status와 Logs 필터를 직접 검증하고 수정 완료 전 성공으로 간주하지 마세요. Saved View는 브라우저 localStorage에 저장되며 JSON/CSV Export는 **현재 로드된 일치 행**만 대상으로 합니다.

@@ -1,0 +1,61 @@
+---
+title: "Deliver Events to a Syslog Receiver"
+description: "Create a SYSLOG_UDP Destination, route a test event, and verify the wire payload."
+---
+
+# Deliver Events to a Syslog Receiver
+
+**Goal:** send one synthetic event to an independently monitored Syslog UDP listener. SYSLOG_TCP and SYSLOG_TLS are available as other Destination types, but this walkthrough deliberately exercises UDP only.
+
+## 1. Prepare the receiver
+
+Run this Python standard-library listener **on a test host reachable by the Control server**:
+
+```bash
+python3 - <<'PY'
+import socket
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.bind(("0.0.0.0", 5514))
+print("Listening UDP/5514; Ctrl+C to stop", flush=True)
+while True:
+    data, addr = s.recvfrom(65535)
+    print("FROM", addr, "PAYLOAD", data.decode("utf-8", errors="replace"), flush=True)
+PY
+```
+
+Use a firewall to restrict UDP 5514 to the test sender; this listener has no authentication. If sending across Docker or hosts, **use the receiver host's reachable IP, not `127.0.0.1` by assumption**.
+
+## 2. Configure the Syslog Destination
+
+1. Open **Destinations → Create** (`/destinations`).
+2. Set **Name** = `Lab Syslog UDP`, **Type** = `SYSLOG_UDP`.
+3. Set **Host** to the actual receiver IP and **Port** = `5514`. Save.
+4. Confirm destination and protocol in the list. A saved Destination is not proof of UDP delivery.
+
+## 3. Create the data flow
+
+1. Use the [Webhook Receiver Connector](/use-cases/webhook-first-flow) with a synthetic event such as `{"id":"syslog-001","message":"hello syslog","severity":"low"}`.
+2. Open `/streams/new` and complete **Connect → Sample & Record Selection** with nonzero extracted records.
+3. Choose `Lab Syslog UDP` under **Destinations**.
+4. In **Route Processing**, keep a basic Transform, inspect the Route delivery settings and format preview if available.
+5. Resolve blocking **Deploy** findings, save/deploy and enable/start the Stream as needed.
+
+## 4. Send, observe and verify
+
+```bash
+curl --fail-with-body -X POST "$CONTROL_RECEIVER_URL" \
+  -H 'Content-Type: application/json' \
+  --data '{"id":"syslog-001","message":"hello syslog","severity":"low"}'
+```
+
+Confirm the receiving terminal prints a UDP datagram associated with the new event, then open **Logs** and match the Stream and Route result. Depending on Route formatting, field names may differ on the wire; compare the configured Syslog payload rather than requiring unchanged JSON.
+
+**PASS:** an actual UDP datagram arrives at the independent listener and a corresponding Route result is recorded. UDP has **no application-level delivery acknowledgement**, so these observations do not prove the downstream SIEM indexed the event.
+
+## If it fails
+
+- No datagram: check UDP firewall, container network, receiver listening address, Host/Port, Route enabled state.
+- Logs show success but SIEM has no indexed event: debug SIEM parser/indexing separately; UDP success is not SIEM acceptance.
+- Need TLS: use `SYSLOG_TLS`, valid trust chain and hostname verification; do **not** use this plaintext UDP example for protected production records.
+
+**Related:** [Per-Route processing](/use-cases/multi-destination), [Incident response](/use-cases/delivery-incident).

@@ -1,0 +1,70 @@
+---
+title: "전송 장애 진단과 복구"
+description: "HTTP 503 장애를 안전하게 재현하고 Route 실패 원인 및 복구 후 수신 결과를 검증합니다."
+---
+
+# Destination 전송 장애 발생 시 조치
+
+**목표:** 테스트 Destination을 HTTP 503으로 만들어 실제 실패 로그를 확인하고, 수신기를 복구하여 정상 전달을 증명합니다.
+
+## 사전 조건
+
+[Webhook 첫 이벤트 전송](/ko/use-cases/webhook-first-flow)을 완료해 9011 포트 수신기에서 HTTP 200과 수신 파일을 확인한 상태입니다. **운영 Destination에서는 장애를 재현하지 않습니다.**
+
+## 1. 테스트용 HTTP 503 생성
+
+1. 실습 수신기를 `Ctrl+C`로 종료합니다.
+2. 다음과 같이 503 응답 모드로 재시작합니다.
+
+```bash
+python3 scenario_receiver.py --port 9011 --status 503 --output received-9011.ndjson
+```
+
+3. 동일한 Control Receiver URL로 새 이벤트를 보냅니다.
+
+```bash
+curl --fail-with-body -X POST "$CONTROL_RECEIVER_URL" \
+  -H 'Content-Type: application/json' \
+  --data '{"id":"delivery-fail-001","message":"controlled failure test"}'
+```
+
+**중요:** Webhook **Ingest**가 2xx를 응답하더라도 하위 **Destination Delivery**가 실패할 수 있습니다. 각각 따로 확인합니다.
+
+## 2. 문제 발생 Route 찾기
+
+1. **Dashboard**에서 전송 상태에 Warning/Critical 또는 실패 징후가 있는지 확인합니다.
+2. **Data Flows / Routes** (`/routes`)에서 영향을 받은 Stream, Route, Destination을 선택합니다.
+3. **Logs** (`/logs`)에서 해당 Stream, Route, 시간 범위, 실패 Status를 필터링합니다.
+4. 실패 항목의 Detail을 열고 **Run ID, Route ID, Stage, HTTP 503/오류, Retry/Failure Policy, 실패 시각**을 기록합니다.
+5. 지원되는 Stream Runtime/Checkpoint 화면에서 미처리 상태를 확인합니다. Ingest 성공만으로 Checkpoint가 진행되었다고 단정하지 않습니다.
+
+## 3. 수신기 복구
+
+1. 실패 응답 수신기를 종료합니다.
+2. HTTP 200 모드로 다시 실행합니다.
+
+```bash
+python3 scenario_receiver.py --port 9011 --status 200 --output received-9011.ndjson
+```
+
+3. `delivery-recovered-001`처럼 새로운 ID의 이벤트를 전송합니다.
+4. `received-9011.ndjson`에 이벤트가 기록되고 Logs에서도 동일한 Route가 성공 처리되었는지 확인합니다.
+
+## 4. 이전 실패 건의 처리 판단
+
+Control의 실제 Retry/Queue/Replay 결과를 먼저 확인합니다. **이미 자동 재시도에 의해 전송된 이벤트를 다시 Replay하지 않습니다.** Replay가 필요하다면 권한, 중복 처리 방식, 수신 시스템 영향을 검토한 후 수행합니다.
+
+Route Delivery 설정의 Failover 구성을 사용하는 경우에도, 하나의 수신기 복구만으로 자동 Failover가 증명되지는 않습니다. Failover 검증은 별도 대체 목적지의 실제 수신까지 확인해야 합니다.
+
+## 완료 조건
+
+실패 당시의 **HTTP 503/Route 실패 증거**, 복구 뒤의 **HTTP 200/실제 수신 파일**, **성공 Route 로그**가 확인되어야 합니다. 이전 실패 이벤트는 Delivered/Queued/Dropped/Unresolved 중 **증거로 확인한 실제 상태**로 분류합니다.
+
+## 실패 시
+
+- 실패 로그가 없음: Stream/Route 실행 여부 및 자동 Retry 여부 확인
+- 복구했지만 수신 없음: Destination URL, Enabled, 수신 IP/방화벽, 파일 확인
+- Dashboard만 성공: 정확한 Run/Event ID로 Logs와 수신기 데이터 재검증
+- Analytics 링크의 필터가 사라짐: 현재 개발 E2E에서 일반 Dashboard로 Redirect된 문제가 있으므로 Logs에서 직접 필터링합니다. [#413](https://github.com/datarelay-labs/datarelay-control/issues/413)
+
+**관련:** [Logs 증빙](/ko/use-cases/logs-audit).

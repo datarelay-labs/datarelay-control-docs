@@ -1,0 +1,61 @@
+---
+title: "Syslog 수신기로 이벤트 전송"
+description: "SYSLOG_UDP Destination을 생성하고 실제 UDP 수신 데이터와 Route 로그를 비교합니다."
+---
+
+# Syslog를 통해 보안 장비로 전달하기
+
+**목표:** 가상 이벤트를 독립적인 Syslog UDP 수신기로 전달합니다. Control은 `SYSLOG_TCP`, `SYSLOG_TLS`도 제공하지만 이 실습은 UDP만 검증합니다.
+
+## 1. 실습용 Syslog 수신기 실행
+
+Control 서버에서 접근 가능한 **테스트 호스트**에서 다음 Python 기본 라이브러리 코드로 UDP 포트 5514를 수신합니다.
+
+```bash
+python3 - <<'PY'
+import socket
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.bind(("0.0.0.0", 5514))
+print("Listening UDP/5514; Ctrl+C to stop", flush=True)
+while True:
+    data, addr = s.recvfrom(65535)
+    print("FROM", addr, "PAYLOAD", data.decode("utf-8", errors="replace"), flush=True)
+PY
+```
+
+인증이 없는 테스트 수신기이므로 방화벽에서 송신 호스트만 허용합니다. Docker/다른 서버에서 `127.0.0.1`을 상대 서버라고 가정하지 않습니다.
+
+## 2. Destination 설정
+
+1. **Destinations → Create** (`/destinations`)를 엽니다.
+2. **Name** = `Lab Syslog UDP`, **Type** = `SYSLOG_UDP`로 선택합니다.
+3. **Host**에 실제 수신 IP, **Port** = `5514`를 입력하고 저장합니다.
+4. 리스트에 Destination이 있는지 확인합니다. 설정 저장만으로 UDP 수신 성공은 아닙니다.
+
+## 3. Stream과 Route 구성
+
+1. [Webhook Connector](/ko/use-cases/webhook-first-flow)를 준비합니다.
+2. `/streams/new`에서 **Connect → Sample & Record Selection**을 진행하고 가상 샘플 `{"id":"syslog-001","message":"hello syslog","severity":"low"}`에서 레코드가 추출되는지 확인합니다.
+3. **Destinations**에서 `Lab Syslog UDP`를 선택합니다.
+4. **Route Processing**에서 기본 Transform, Route Delivery 설정 및 지원되는 포맷 Preview를 확인합니다.
+5. **Deploy** 차단 조건을 해결하고 저장/배포 후 필요하면 Stream을 실행합니다.
+
+## 4. 실제 전송 결과 검증
+
+```bash
+curl --fail-with-body -X POST "$CONTROL_RECEIVER_URL" \
+  -H 'Content-Type: application/json' \
+  --data '{"id":"syslog-001","message":"hello syslog","severity":"low"}'
+```
+
+테스트 수신 터미널에 **새 UDP Datagram**이 출력되는지 확인하고, **Logs**에서 관련 Stream/Route 결과를 찾습니다. Syslog Formatter에 따라 실제 전송 메시지는 입력 JSON과 다를 수 있으므로 Wire Payload를 직접 비교합니다.
+
+**완료 조건:** 독립 수신기의 Datagram + 해당 Route 로그. **UDP에는 수신 애플리케이션 ACK가 없으므로**, SIEM에 최종 인덱싱됐는지는 해당 SIEM에서도 별도 검증해야 합니다.
+
+## 실패 시
+
+- UDP 미수신: 네트워크 방화벽/포트/호스트 IP/Route Enabled를 확인합니다.
+- Logs는 성공이나 SIEM 미수집: SIEM 파서·인덱싱 여부를 별도로 확인합니다.
+- 암호화 필요: 프로덕션 데이터에는 `SYSLOG_TLS`와 정상 인증서를 구성하고 이 실습의 평문 UDP를 그대로 사용하지 않습니다.
+
+**관련:** [두 Route 구성](/ko/use-cases/multi-destination), [장애 분석](/ko/use-cases/delivery-incident).
