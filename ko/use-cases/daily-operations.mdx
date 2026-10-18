@@ -1,0 +1,45 @@
+---
+title: "운영자 일일 점검"
+description: "Dashboard에서 문제 Stream과 Route를 찾아 실제 로그와 수신 상태까지 점검합니다."
+---
+
+# DataRelay Control 일일 운영 점검
+
+**목표:** 중요한 데이터가 정상 수집·전송되는지 확인하고 장애 시 **Stream/Route/Destination** 단위로 문제를 좁힙니다.
+
+## 근무 시작 전
+
+담당하는 Stream Group, 평상시 수집량/수집 간격을 확인합니다. 상태 조회만 한다면 Viewer 권한을 사용하고, 설정 변경·Replay 등은 허가된 Operator/Administrator 계정을 사용합니다.
+
+## 1. 전체 흐름 상태 확인
+
+1. **Dashboard** (`/monitoring`)를 엽니다.
+2. 확인 시간 범위를 기록하고 **Healthy/Warning/Critical**, **Incoming/Outgoing Events**, **Delivery Success Rate**를 확인합니다.
+3. **No Data / Low Volume** Stream을 찾습니다. 단, 원래 조용한 Source라면 데이터 0건이 정상일 수 있으므로 기대되는 수집 주기와 비교합니다.
+4. Destination Capacity, Schema Drift 등 Warning을 검토하되 Dashboard의 집계 결과만으로 장애 원인을 단정하지 않습니다.
+
+## 2. 문제 Stream 찾기
+
+1. **Streams** (`/streams`)를 열어 해당 Source Product/Group을 선택합니다.
+2. 수집량이나 상태가 비정상적인 Stream의 Runtime/Detail을 엽니다.
+3. Source 수집, 마지막 Run, 추출 레코드, Checkpoint, Stream Enabled 상태를 확인합니다.
+4. **Data Flows / Routes** (`/routes`)에서 Route별 Destination 상태를 비교합니다.
+
+## 3. 실제 이벤트 증거 수집
+
+1. **Logs** (`/logs`)에서 정확한 Stream/Route, 시간 범위, Status, Stage로 필터링합니다.
+2. 오류 Row의 Detail에서 Event/Run/Route ID, 시각, Stage, 오류와 Destination을 기록합니다.
+3. 전송 실패이면 [전송 장애 진단과 복구](/ko/use-cases/delivery-incident), 정책 격리라면 [Quarantine·Release·Replay](/ko/use-cases/quarantine-replay)를 수행합니다.
+4. 사고 분석 자료가 필요하면 [Logs·Saved View·Export](/ko/use-cases/logs-audit)를 따라 현재 로드된 필터 일치 행을 추출합니다.
+
+## 4. 복구 확인
+
+허가된 조치 후 **새로운 Run**을 관찰하고 해당 Event/Route ID, 독립 수신 시스템의 실제 데이터, Checkpoint 결과를 비교합니다. Dashboard가 Healthy로 바뀌었다고 이전 실패 이벤트까지 복구된 것으로 판단하지 않습니다.
+
+## 점검 기록과 완료 기준
+
+점검 시각, Stream Group, 문제 Stream/Route/Destination, 실패 원인, 조치, Run ID, 이후 수신 증명, 미해결 항목 및 담당자를 기록합니다.
+
+**완료 조건:** 모든 중요 Stream이 정상이라는 증빙이 있거나, 문제가 있는 경우 담당자와 근거 로그가 기록된 상태여야 합니다. Dashboard를 초록색으로 만들기 위해 임의로 Alert/Policy를 비활성화하지 않습니다.
+
+**관련:** [로그 증빙](/ko/use-cases/logs-audit), [Schema 변경](/ko/use-cases/schema-change), [Route Processing](/ko/processing/route-processing).

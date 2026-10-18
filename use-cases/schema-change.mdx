@@ -1,0 +1,51 @@
+---
+title: "Handle Schema Changes"
+description: "Inspect Union Schema and select an explicit policy for new or sensitive fields."
+---
+
+# Handle Schema Changes
+
+**Goal:** detect a new field in incoming events, distinguish observation from confirmed drift, and decide what to do before allowing deliveries.
+
+## 1. Start with known events
+
+Create a Stream using [the HTTP or Webhook guide](/use-cases/webhook-first-flow). Send several synthetic events containing:
+
+```json
+{"id":"schema-001","user":{"name":"alice"},"severity":"low"}
+```
+
+In **Sample & Record Selection**, confirm **Record Selection** and **Union Schema**. The observed schema combines fields across the selected events; it is not limited to one arbitrary sample.
+
+## 2. Send a changed event
+
+Send another synthetic event through the same receiver:
+
+```json
+{"id":"schema-002","user":{"name":"alice","email":"lab@example.invalid"},"severity":"low","custom_flag":true}
+```
+
+Re-run sample collection or use the runtime/schema view supported by your Stream. Inspect the new field paths and their occurrence counts. A newly observed field is not automatically a confirmed schema incident.
+
+## 3. Select a handling policy
+
+1. Open **Stream Edit → Route Processing → Protection / Schema Drift Policy** (or the corresponding Route editor).
+2. For ordinary unknown fields, review the default **Pass Through** behavior; change to **Require Review** or **Quarantine** only when needed.
+3. For suspected sensitive fields such as email or API keys, review any sensitivity suggestion and explicitly choose an appropriate protection/review action. Automatic suggestions must not silently activate a policy.
+4. Keep the Stream-level Union Schema baseline shared by Routes; use per-Route overrides only for destination-specific treatment.
+5. Save, verify the effective configuration and distinguish **Observed** from **Confirmed Drift** in operational evidence.
+
+## 4. Verify the result
+
+Send a second changed event with a unique ID. Inspect **Logs**, Stream/Route details, policy warnings, and the actual receiver payload or held-event record. Confirm ordinary fields follow the selected policy and sensitive fields are not unexpectedly exposed.
+
+**PASS =** changed fields are visible in the observation/evidence, the chosen policy is effective, and the delivered or held event matches that policy.
+
+## If it fails
+
+- No new field: ensure the event was accepted, correct root selected, and multiple events were sampled.
+- Sensitive suggestion missing: choose the actual observed field path and review the sensitivity configuration; suggestions are not guarantees.
+- Event disappeared: inspect **Quarantine**, **Policy**, and **Logs** before assuming data loss.
+- Field passes through unexpectedly: confirm the rule was saved and applies to the effective Route, not just a draft.
+
+**Related:** [Mask by Route](/use-cases/protect-pii), [Quarantine review](/use-cases/quarantine-replay).

@@ -1,0 +1,54 @@
+---
+title: "Logs 필터링·Saved View·Export"
+description: "실패 이벤트를 식별하고 브라우저 저장 필터 및 CSV/JSON 증빙 파일을 만드는 방법입니다."
+---
+
+# 장애 로그를 찾아 증빙 파일로 남기기
+
+**목표:** 특정 Stream/Route의 전송 이벤트를 재현 가능한 조건으로 필터링하고, 결과를 저장하여 장애 조사에 활용합니다.
+
+## 1. Logs에서 대상 지정
+
+1. **Logs** (`/logs`) 메뉴를 엽니다.
+2. 발생 시점이 포함되는 시간 범위와 **Stream, Route, Status/Level/Stage**를 선택합니다.
+3. 해당 Row를 선택해 전송 결과, Stage, Timestamp, Run ID, 오류 정보를 확인합니다.
+4. Route 또는 Destination 상세에서 전달된 Deep Link라면 필터가 의도한 실제 ID를 가리키는지 먼저 확인합니다.
+
+## 2. Saved View 저장
+
+1. 필터를 모두 적용한 상태에서 **Saved searches** 메뉴를 엽니다.
+2. 현재 필터 Snapshot을 `lab-route-503-20261018`처럼 의미 있는 이름으로 저장합니다.
+3. **Saved** 목록에서 방금 만든 항목을 다시 선택합니다. 필터와 검색 결과가 재적용되는지 확인합니다.
+
+<Note>
+현재 구현은 Saved Search를 서버가 아닌 **브라우저 localStorage**의 `gdc.logs.savedSearches.v1`에 저장합니다. 다른 PC에 자동 공유되지 않으며 브라우저 저장 데이터 삭제 시 소실될 수 있습니다. 공식 증빙은 반드시 별도 파일로 내보내야 합니다.
+</Note>
+
+## 3. JSON 또는 CSV 다운로드
+
+1. **Download** 메뉴를 열고 다음 중 하나를 선택합니다.
+   - **Download JSON (loaded matching rows)**
+   - **Download CSV (loaded matching rows)**
+2. 파일을 열어 화면에서 필터링한 Stream/Route/Run/Event 식별자와 일치하는지 확인합니다.
+3. 공식 사고 조사에 첨부한다면 추출 시각, 담당자, 적용 필터, 필요 시 파일 SHA256도 함께 기록합니다.
+
+**주의:** Export 대상은 **현재 로드된 필터 일치 Rows**입니다. 서버에 존재하는 모든 과거 이벤트가 자동 포함되지는 않습니다. 추가 Page/기간이 필요하면 해당 범위를 별도로 조사하고 추출합니다.
+
+## 4. 실제 수신 또는 Governance와 교차 확인
+
+- 성공 이벤트: `received-9011.ndjson` 등 Destination의 독립 수신 기록과 비교
+- 실패 이벤트: 실제 503 응답/시각/Run ID와 로그를 비교
+- 격리 이벤트: Governance → Quarantine 기록을 직접 확인
+
+## 완료 조건
+
+**필터 조건, Log Detail, Saved View, 다운로드한 CSV/JSON의 식별자**가 일치하고 실제 전송/격리 상태를 독립 자료로 확인합니다.
+
+## 실패 시
+
+- Saved View가 없어짐: 동일 브라우저 프로필과 localStorage 유지 여부 확인
+- 다운로드 결과가 0건: 화면에 현재 로드된 필터 일치 Rows가 존재하는지 확인
+- `route_id` 필터가 다름: Route의 실제 Numeric ID 확인, 표시 이름만으로 동일성 추정 금지
+- 이전 URL이 404: `/logs`로 직접 이동하여 알고 있는 조건을 다시 적용
+
+**관련:** [전송 장애 대응](/ko/use-cases/delivery-incident), [Quarantine](/ko/use-cases/quarantine-replay).

@@ -1,0 +1,71 @@
+---
+title: "Webhook 첫 이벤트 전송"
+description: "Webhook Receiver부터 Stream·Route·HTTP Destination까지 생성하고 실제 수신을 검증합니다."
+---
+
+# Webhook으로 첫 이벤트 전송
+
+**목표:** JSON 이벤트 1건을 Control에 입력하고, 독립적인 HTTP 수신기에 실제 도착했는지 확인합니다.
+
+**사전 조건:** [실습 수신기(9011 포트)](/ko/use-cases/lab-setup) 실행, Control의 Operator/Administrator 권한, Control 서버에서 실습 수신기로 네트워크 접근 가능.
+
+## 1. Destination 생성
+
+1. **Destinations** (`/destinations`)에서 새 Destination을 만듭니다.
+2. **Name** = `Lab Webhook Sink`, **Type** = `WEBHOOK_POST`를 입력합니다.
+3. **URL** = `http://접근가능한-테스트서버-IP:9011/sink`를 입력합니다. IP는 **Control 서버에서 접근할 수 있는 실제 주소**여야 합니다.
+4. **Webhook Payload Mode** = **Single Event Object** (`SINGLE_EVENT_OBJECT`)로 선택합니다.
+5. 저장하고 연결 테스트 메뉴가 있다면 테스트합니다. 저장 성공이 데이터 전송 성공을 의미하지는 않습니다.
+
+## 2. Webhook Receiver Connector 생성
+
+1. **Connectors** (`/connectors`)에서 **Add/Create Connector**를 선택합니다.
+2. Source type은 **Webhook Receiver**를 선택하고 **Connector Name**에 `Lab Webhook Source`를 입력합니다.
+3. **Webhook Receiver → Auth mode**는 *격리된 실습 환경에 한해* **No auth**를 선택합니다. 실제 시스템에서는 **Shared secret header** 또는 **Bearer token**을 사용합니다.
+4. [가상 샘플 JSON](/ko/use-cases/lab-setup)을 **Payload preview**에 입력합니다.
+5. Connector를 저장한 뒤 상세 화면에 표시된 **Receiver URL**을 복사합니다. 경로는 `/api/v1/ingest/webhook/{receiver_key}`이며, `receiver_key`는 제품이 생성한 실제 값을 사용합니다.
+
+<Note>
+Receiver URL을 브라우저에서 여는 것은 GET 요청이므로 이벤트 수집이 아닙니다. JSON/NDJSON의 HTTP POST로 전송해야 합니다.
+</Note>
+
+## 3. Stream과 Route 생성
+
+1. **Streams → Create** 또는 제품 내 `/streams/new`로 이동합니다.
+2. **Connect:** 앞에서 만든 `Lab Webhook Source`를 선택합니다.
+3. **Sample & Record Selection:** **Run Test**, **Record Selection**에서 실제 샘플 레코드가 확인되는지 보고 Event Root/Record Path를 확정합니다. 레코드가 0건이면 Payload preview 또는 테스트 이벤트 입력 상태를 다시 확인합니다.
+4. **Destinations:** `Lab Webhook Sink`를 선택합니다. 해당 Destination과 연결된 Route가 생기는지 확인합니다.
+5. **Route Processing:** 첫 실습은 공통 기본값을 사용합니다. Preview와 경고를 검토하되 **Preview가 실제 전송 성공의 증거는 아닙니다**.
+6. **Deploy:** Readiness 문제를 해결한 후 설정을 배포하고 필요하다면 Stream을 명시적으로 Start/Enable합니다.
+
+## 4. 실제 이벤트 전송
+
+복사한 Receiver URL을 다음 환경변수에 넣고 요청을 보냅니다.
+
+```bash
+export CONTROL_RECEIVER_URL='https://CONTROL-HOST/api/v1/ingest/webhook/실제_RECEIVER_KEY'
+curl --fail-with-body -X POST "$CONTROL_RECEIVER_URL" \
+  -H 'Content-Type: application/json' \
+  --data '{"id":"control-lab-001","event_time":"2026-10-18T00:00:00Z","user":{"name":"lab-user","email":"lab@example.invalid"},"severity":"low","message":"test event"}'
+```
+
+위 URL은 예시입니다. Connector에서 Secret/Bearer 인증을 사용했다면 해당 헤더도 반드시 포함해야 합니다. 테스트 편의를 위해 운영 인증을 끄지 않습니다.
+
+## 5. 성공 여부 직접 확인
+
+1. **Streams**에서 Stream의 실행/활성 상태와 최근 Run을 확인합니다.
+2. **Data Flows / Routes** (`/routes`)에서 Route와 Destination 연결을 확인합니다.
+3. **Logs** (`/logs`)에서 Stream, Route, Status를 필터링하고 전송 결과를 확인합니다.
+4. 수신기 서버에서 `tail -n 3 received-9011.ndjson`을 실행합니다. `control-lab-001`이 실제 파일에 있는지 확인합니다.
+
+**완료 조건:** 동일한 이벤트 ID의 **Route 전송 성공 로그**와 **HTTP 수신기에 저장된 데이터**가 모두 존재해야 합니다. Ingest의 HTTP 2xx 응답만으로 완료 처리하지 않습니다.
+
+## 실패 시
+
+- Receiver URL이 없음: Connector를 저장하고 상세 화면에서 다시 복사합니다. 키를 임의 생성하지 않습니다.
+- POST가 401/403: Auth mode와 실제 인증 헤더를 확인합니다.
+- 샘플이 0건: Sample의 Event Root/Record Selection을 다시 확인합니다.
+- 수신 파일이 비어 있음: Docker 내부와 호스트의 IP 차이, 방화벽, Route Enabled, Logs를 순서대로 확인합니다.
+- `409 RUN_ALREADY_ACTIVE`: 실행 중인 Run 충돌 여부를 먼저 확인하고 중복 입력을 피합니다.
+
+**다음:** [두 목적지로 동시에 전달](/ko/use-cases/multi-destination).

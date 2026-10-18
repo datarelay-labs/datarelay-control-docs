@@ -1,0 +1,71 @@
+---
+title: "Webhook to First Delivered Event"
+description: "Create a complete Webhook Receiver → Stream → Route → HTTP Destination path and prove delivery."
+---
+
+# Webhook to First Delivered Event
+
+**Goal:** send one JSON event into Control and verify its arrival at an independent HTTP sink.
+
+**Requires:** [lab receiver running on port 9011](/use-cases/lab-setup), a Control Operator/Administrator account, and network reachability from Control to the sink.
+
+## 1. Create the Destination
+
+1. Open **Destinations** (`/destinations`) and select the create/new action.
+2. Enter **Name** = `Lab Webhook Sink` and **Type** = `WEBHOOK_POST`.
+3. Set **URL** = `http://REACHABLE-TEST-HOST:9011/sink`, replacing the placeholder with the address reachable from Control's network.
+4. Set **Webhook Payload Mode** = **Single Event Object** (`SINGLE_EVENT_OBJECT`).
+5. Save. If a connection/test action is available, run it; inspect and resolve any failure. A saved Destination is not yet proof of delivery.
+
+## 2. Create a Webhook Receiver Connector
+
+1. Open **Connectors** (`/connectors`), choose **Add/Create Connector**, and select **Webhook Receiver**.
+2. Set **Connector Name** = `Lab Webhook Source`.
+3. In **Webhook Receiver**, select **Auth mode** = **No auth** *only in this isolated lab*. For real senders use Shared secret header or Bearer token and provide the corresponding secret outside the documentation.
+4. Paste the [synthetic JSON sample](/use-cases/lab-setup) into **Payload preview**.
+5. Save. Return to the Connector detail and copy the generated **Receiver URL**. It ends in `/api/v1/ingest/webhook/{receiver_key}`. **Do not invent or reuse an arbitrary receiver key.**
+
+<Note>
+Opening the Receiver URL in a browser performs a GET request, not a JSON ingest. An actual ingest is HTTP POST with JSON or NDJSON. If the Connector offers **Copy URL**, use that value.
+</Note>
+
+## 3. Create the Stream and Route
+
+1. Open **Streams → Create** or navigate to `/streams/new`.
+2. **Connect:** select `Lab Webhook Source`; confirm the source configuration.
+3. **Sample & Record Selection:** inspect **Run Test** and **Record Selection**. Confirm a sample event, the event root/record path, and the extraction result. Use the configured payload preview or send a lab event if no records are available; do **not** claim success when zero records are selected.
+4. **Destinations:** choose `Lab Webhook Sink` (or the previously saved Destination). Control associates a Route with it.
+5. **Route Processing:** use inherited/default processing for this initial test; check **Route Processing Preview** and unresolved validation warnings. Mapping preview alone is not delivery proof.
+6. **Deploy:** verify readiness; save/deploy and explicitly start/enable the Stream if the resulting state requires it.
+
+## 4. Send one event into Control
+
+Copy the generated Receiver URL in the Connector UI and assign it locally, then send:
+
+```bash
+export CONTROL_RECEIVER_URL='https://CONTROL-HOST/api/v1/ingest/webhook/ACTUAL_KEY'
+curl --fail-with-body -X POST "$CONTROL_RECEIVER_URL" \
+  -H 'Content-Type: application/json' \
+  --data '{"id":"control-lab-001","event_time":"2026-10-18T00:00:00Z","user":{"name":"lab-user","email":"lab@example.invalid"},"severity":"low","message":"test event"}'
+```
+
+The URL above is a placeholder. If **Shared secret header** or **Bearer token** is configured, send the matching authorization header; do not disable production authentication for a test.
+
+## 5. Confirm end-to-end delivery
+
+1. Check **Streams** for an enabled/running Stream and a recent execution.
+2. Open **Data Flows / Routes** (`/routes`) and inspect the Route and Destination state.
+3. Open **Logs** (`/logs`), filter by the relevant Stream, Route, and status; find a successful delivery for the new event.
+4. On the independent receiver host, run `tail -n 3 received-9011.ndjson`. Confirm `control-lab-001` in the payload. Compare its fields to the sample.
+
+**PASS =** event received by HTTP sink **and** correlated successful Route delivery evidence. A 2xx ingest response alone is **not** the acceptance criterion.
+
+## If it fails
+
+- **No Receiver URL:** save the Connector and reopen details; do not guess the key.
+- **401/403 on POST:** check the selected webhook authentication mode and header.
+- **No sample / no event root:** return to Sample & Record Selection and confirm records, not just JSON preview.
+- **Receiver has no event:** verify the sink's reachable IP (especially across Docker), URL, Route enabled state, and Logs.
+- **HTTP 409 `RUN_ALREADY_ACTIVE`:** another run overlaps; inspect runtime status and retry only after resolving the overlap without creating duplicate events.
+
+**Next:** [send to two destinations](/use-cases/multi-destination).

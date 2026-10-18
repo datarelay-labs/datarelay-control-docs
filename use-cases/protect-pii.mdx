@@ -1,0 +1,59 @@
+---
+title: "Mask Data for Only One Route"
+description: "Configure separate per-destination data protection rules without duplicating the Stream."
+---
+
+# Mask Data for Only One Route
+
+**Goal:** an internal Destination may receive an email under an explicit audit-only rule, while an external Destination receives a masked value. Use **synthetic** data only.
+
+## Starting state
+
+Complete [Two destinations](/use-cases/multi-destination) with both Routes working. Make sure the sampled event actually contains `user.email` (or choose the equivalent field path displayed in your Union Schema).
+
+```json
+{
+  "id": "pii-demo-001",
+  "user": { "email": "lab@example.invalid" },
+  "message": "synthetic protection demo"
+}
+```
+
+## 1. Establish the default
+
+1. Open the Stream's Edit Wizard (`/streams/{id}/edit`) or, for a new Stream, its **Route Processing** step.
+2. Select **Global Processing → Data Protection**. Choose the observed email field (the actual path shown by the UI).
+3. Set the intended default rule to **Audit Only** and **Continue Delivery**, if that is permitted for your isolated internal test.
+4. Explicitly save any rule that requires **Save Rule**, rather than assuming the preview autosaves.
+5. Review the default summary and warnings.
+
+<Warning>
+Audit Only preserves the original value. Do not use it for real regulated personal data unless your organization's policy explicitly permits that internal Destination.
+</Warning>
+
+## 2. Override the external Route
+
+1. Select the **Lab External** Route.
+2. Turn off **Inherit Global** for **Protection**.
+3. Select the same email field and set **Mask** (partial/full according to your intended policy).
+4. Set event-level **Delivery Behavior** to **Continue Delivery**. `Remove/Drop` removes a field; `Block` prevents the **whole event** from being delivered — they are not interchangeable.
+5. Save the complete Route Protection configuration and confirm its **effective** status is **Overridden** rather than **Intent only**.
+6. Inspect any Route-specific protection preview. A mapping-only preview is **not** proof of masking.
+7. If the wizard stages an override but reports a conflict on Save, do not assert deployment succeeded; use the supported Route Edit path and inspect [Known Limitations](/reference/limitations).
+
+## 3. Send and compare
+
+1. Publish the synthetic `pii-demo-001` event via the configured Webhook Receiver.
+2. Inspect the internal and external receiver output files and matching Route Logs.
+3. Confirm the external recipient's email **is not equal to** `lab@example.invalid`; verify the effective action actually masked or removed it as intended.
+4. Check the internal receipt only if Audit Only is expressly allowed in your lab; correlate both events by ID.
+
+**PASS =** saved effective Route rule, Route delivery status, and independent payload showing that the external receiver does **not** receive the raw email.
+
+## If it fails
+
+- Field does not appear: confirm **Sample & Record Selection**, field path and Union Schema.
+- External still receives raw email: stop testing with real data; check Inherit/Override, effective policy, and the run used for evidence.
+- `409 STREAM_STALE_WRITE` during staged Save: this is a known, reproduced development issue in [Control #413](https://github.com/datarelay-labs/datarelay-control/issues/413); preserve the draft, avoid claiming it persisted, and use the verified Route editor only where that operation succeeds.
+
+**Related:** [Schema changes](/use-cases/schema-change), [Governance](/governance/overview).

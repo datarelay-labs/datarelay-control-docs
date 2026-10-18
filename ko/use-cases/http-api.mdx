@@ -1,0 +1,66 @@
+---
+title: "HTTP API 데이터 수집"
+description: "실제 Vendor API 연결부터 샘플 선택·페이지 처리·Checkpoint·전송 검증까지 안내합니다."
+---
+
+# HTTP API에서 이벤트 수집하기
+
+**목표:** 제품의 HTTP API Polling Connector로 이벤트를 수집해 일반 Stream/Route를 통해 Destination으로 전송합니다.
+
+## API 소유자에게 먼저 확보할 정보
+
+실제로 접근 가능한 Base URL, 요청 경로/Method, 인증 방식, 개인정보가 제거된 응답 샘플, Pagination, 이벤트 순서 및 Cursor/Checkpoint 정의가 필요합니다. 아래 주소는 실제로 동작하는 API가 **아닌 설명용**입니다.
+
+| 항목 | 예시 | 설정 위치 |
+| --- | --- | --- |
+| Base URL | `https://vendor.example.invalid` | Connector의 **Host / Base URL** |
+| API 경로 | `/v1/audit/events` | Connect/Run Test의 Request Path |
+| 인증 | Vendor 문서상의 API Key 또는 Bearer | Credential/Auth |
+| 이벤트 배열 | `$.events` | 실제 응답에서 해당 경로가 존재하는 경우 Record Selection |
+| 커서 | `event_time` | 해당 필드가 안정적·단조증가하는 경우만 Checkpoint |
+
+## 1. Connector 만들기
+
+1. **Connectors → Create Connector**로 이동하여 **HTTP API Polling**을 선택합니다.
+2. **Connector Name**, 실제 **Host / Base URL**을 입력합니다.
+3. Vendor가 지원하는 인증 방식을 선택하고 Credential을 구성합니다. Secret을 공개 YAML이나 샘플 JSON에 넣지 않습니다.
+4. Connector를 저장한 뒤 연결 테스트 기능이 제공되면 실제 응답/TLS/권한을 검증합니다.
+
+## 2. 수집 방법 지정
+
+1. `/streams/new`를 열고 **Connect**에서 앞의 Connector를 선택합니다.
+2. 실제 Endpoint, HTTP Method, Query Parameter를 설정합니다.
+3. Vendor 문서에 따라 Page/Offset/Cursor 방식의 Pagination을 설정합니다. 제품마다 방식이 다르므로 임의로 추정하지 않습니다.
+4. **Sample & Record Selection → Run Test**에서 API 호출을 수행하고 HTTP Status와 응답 JSON을 확인합니다.
+5. **Record Selection**에서 실제 이벤트 배열을 지정합니다. `{"events":[...]}` 구조가 확인될 때만 `$.events`를 선택하고 추출 건수를 검증합니다.
+6. Union Schema에서 필수/드문 필드와 민감 필드 제안을 검토합니다. 자동 제안한 Record Path와 Checkpoint는 사용자 확인 후 사용합니다.
+7. 이벤트 진행 상태에 사용할 Checkpoint Mode와 Field를 구성합니다. 안정적인 Cursor가 없는 API라면 잘못된 증분 수집을 강행하지 않습니다.
+
+## 3. Destination 연결 및 배포
+
+1. **Destinations**에서 기존 목적지를 선택합니다. 독립 검증이 필요하면 [테스트 수신기](/ko/use-cases/lab-setup)를 사용합니다.
+2. **Route Processing**에서 Transform, 필요한 Data Protection, Preview를 확인합니다.
+3. **Deploy**의 차단 경고를 해결한 후 배포하고, 필요 시 Stream을 시작합니다.
+4. 실제 수집 Run을 수행하여 **Logs의 Route 결과**와 **Destination 수신 기록**을 모두 확인합니다.
+
+## 4. 증분 수집의 정확도 확인
+
+- Run ID, 수집 이벤트 ID/시간 범위, 실행 전 Checkpoint를 기록합니다.
+- 새 이벤트가 없는 상태에서 다음 주기를 실행하고 예상치 못한 중복이 없는지 확인합니다.
+- 테스트 가능한 Vendor API라면 새 가상 이벤트를 추가하고 수집·전송·Checkpoint 갱신을 검증합니다.
+- **필요한 Destination 전달이 성공하기 전에는 Checkpoint가 전진하지 않아야** 합니다.
+- Timestamp 중복/순서 변경이 있는 API라면 커서 전략을 수정해야 합니다.
+
+## 문제 해결
+
+| 증상 | 확인할 항목 |
+| --- | --- |
+| 401/403 | Credential, Token 만료, Vendor 권한 |
+| 429/Timeout | 호출 제한, Backoff, Connector/API Health |
+| API 응답은 오지만 레코드가 0건 | JSON Envelope, Event Root, 요청 필터 |
+| 동일 이벤트 반복 수집 | Cursor/Checkpoint, 정렬 기준 |
+| 수집은 됐으나 전송 실패 | Route, Destination, Policy/Protection, Logs |
+
+**완료 조건:** 신규 이벤트가 독립 Destination에 저장되고, 그 이벤트의 Route 전송 로그와 Checkpoint 동작이 일치합니다.
+
+**관련:** [Schema 변경](/ko/use-cases/schema-change), [전송 장애](/ko/use-cases/delivery-incident).

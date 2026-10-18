@@ -1,0 +1,47 @@
+---
+title: "Marketplace Package to Running Stream"
+description: "Review package trust, install a supported declarative integration, then configure a separate credential and Stream."
+---
+
+# Marketplace Package to Running Stream
+
+**Goal:** use a package as a starting point for an integration without mistaking installation for an active data flow.
+
+<Warning>
+Marketplace lifecycle, signing, external registry, and AI Builder capabilities are part of the **current development branch**, not independently established as an immutable GA feature set. UI actions depend on deployed version, role and integration support. If a package action is absent, use a currently built-in Connector; do not assume the feature is available in your release.
+</Warning>
+
+## 1. Select a real package
+
+1. Open **Connectors** (`/connectors`) and any **Marketplace / Browse Integrations** entry exposed by your deployment. Administrative package/registry functions may also appear under **Administration → Connector Catalog** (`/admin/connector-catalog`).
+2. Search for the vendor or product you actually use.
+3. Open the package details. Verify **origin**, package and vendor API versions, supplied Streams, declared authentication, compatibility, license/provenance, and trust/support tier.
+4. Treat **Imported** or **Community** labels as different from live-vendor-API verification. Do not promote a self-declared package to Verified/Official.
+
+## 2. Validate and install (when enabled)
+
+1. Select an already trusted built-in or approved package.
+2. Review validation warnings and compatibility results. Resolve blocking findings before installation.
+3. Choose **Install** where available. For offline installs use the specifically supported signed/upload method and administrator policy.
+4. Confirm catalog installation/version state. **Installation itself must not activate polling, create a credential, change a running Stream, or advance its checkpoint.**
+
+Do not place API secrets inside package files or arbitrary executable Python/JS/shell code in a V1 declarative package.
+
+## 3. Configure an actual data flow
+
+1. Return to **Connectors** and select the newly available Connector/preset.
+2. Create/configure the appropriate **Credential** using a supported auth method.
+3. Open `/streams/new`, choose this Connector in **Connect**, and **Run Test** against your own vendor account.
+4. In **Record Selection**, validate the current response and event root; package sample/schema is onboarding evidence, not authoritative runtime data.
+5. Choose a test Destination, configure the Route, check the effective preview, **Deploy** and enable/start the Stream.
+6. Verify the vendor test event in **Logs** and an actual destination receipt.
+
+## 4. Updating an integration
+
+Before **Upgrade / Rollback / Uninstall**, review dependency information and the impact on active Streams and mappings. An upgrade must not silently rewrite active Stream configuration or schema baseline. Rollback does not rewind delivered events/checkpoints.
+
+## Completion check
+
+**PASS =** package origin/version reviewed, catalog state confirmed, Credential configured separately, Stream sample verified, and independent Route delivery receipt. Package installation alone is **not PASS**.
+
+**Alternative:** if no supported integration is available, follow [HTTP API collection](/use-cases/http-api) with a Generic HTTP Connector. See [Connectors & Marketplace](/administration/connectors-marketplace) and [Known Limitations](/reference/limitations).

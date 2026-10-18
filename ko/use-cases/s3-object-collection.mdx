@@ -1,0 +1,48 @@
+---
+title: "S3·MinIO 버킷 로그 수집"
+description: "S3 Object Polling, Prefix/패턴 필터, Stream 및 Destination 전송을 실습합니다."
+---
+
+# AWS S3 또는 MinIO 로그 파일 수집하기
+
+**목표:** S3 호환 버킷의 가상 이벤트 파일을 수집하고 Stream/Route를 통해 전송합니다.
+
+## 1. 테스트 객체 업로드
+
+테스트용 MinIO 또는 AWS S3 버킷에 `security/tutorial.jsonl` 객체를 만들고 다음 내용을 저장합니다.
+
+```json
+{"id":"s3-001","message":"object event one","severity":"low"}
+```
+
+Control Runtime이 해당 S3 Endpoint에 접근할 수 있어야 합니다. 테스트 권한은 읽기/목록 조회만 부여하고 운영 키를 문서나 Package에 포함하지 않습니다.
+
+## 2. S3 Connector 생성
+
+1. **Connectors → Create Connector → S3 Object Polling (MinIO / AWS-compatible)**을 선택합니다.
+2. **Connector Name** = `Lab S3 Events`를 입력합니다.
+3. **S3 endpoint & bucket**에서 실제 **Endpoint URL**, **Bucket**, **Region**을 입력합니다.
+4. **Prefix** = `security/`, **Object key pattern** = `*.jsonl`을 예시로 설정합니다. 실제 Object Key 구조와 일치하도록 확인합니다.
+5. **Access key**, **Secret key**를 Connector의 보호되는 입력 항목에 설정합니다.
+6. MinIO는 필요하면 **Path-style addressing**을 켭니다. 보안이 필요한 네트워크에서는 올바른 인증서와 HTTPS를 사용합니다.
+7. 저장 후 지원되는 S3 연결/목록 테스트로 지정한 객체가 조회되는지 확인합니다.
+
+## 3. Stream 구성
+
+1. `/streams/new`의 **Connect**에서 `Lab S3 Events`를 선택합니다.
+2. **Sample & Record Selection**에서 테스트 후 JSONL 레코드가 올바르게 추출되는지 확인합니다.
+3. Event Root와 Union Schema를 점검하고 지원되는 Checkpoint/객체 진행 정책을 구성합니다.
+4. [테스트 HTTP Destination](/ko/use-cases/lab-setup)를 선택합니다.
+5. **Route Processing → Deploy**를 수행하고 Stream 실행 상태를 확인합니다.
+6. **Logs**와 실제 HTTP 수신 파일에서 `s3-001`을 찾습니다.
+
+**완료 조건:** S3 객체 발견, 레코드 추출, Route 전송 성공, 독립 수신 결과가 모두 일치합니다.
+
+## 실패 시
+
+- 객체 목록 없음: Bucket/Prefix/Object key pattern/권한 확인
+- Endpoint/TLS 실패: Region, URL, 인증서 및 네트워크 확인
+- 객체는 읽혔지만 레코드 0건: JSONL/배열/객체 형식과 Record Selection 확인
+- 객체 반복 수집: Checkpoint와 객체 식별 처리 확인
+
+**관련:** [첫 이벤트 전송](/ko/use-cases/webhook-first-flow), [Schema 변경](/ko/use-cases/schema-change).

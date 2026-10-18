@@ -1,0 +1,63 @@
+---
+title: "Quarantine·Release·Replay"
+description: "의심 이벤트를 격리하고 조사 후 허가된 작업을 수행하며 결과를 기록하는 실습입니다."
+---
+
+# 이벤트 격리 후 검토하고 재처리하기
+
+**목표:** 정책에 걸린 가상 이벤트가 Destination에 전달되지 않도록 격리하고, 운영자가 검토해 처리한 결과까지 확인합니다.
+
+## 사전 조건
+
+- [기본 전송](/ko/use-cases/webhook-first-flow)이 가능한 Stream/Route/Destination
+- `api_key = demo-not-a-secret` 같은 **실제 키가 아닌** 가상 필드
+- 필요한 Governance Action 권한. Viewer처럼 읽기 전용 역할은 Release/Replay가 제한됩니다.
+
+## 1. Quarantine 정책 적용
+
+1. **Stream Edit → Route Processing → Protection / Policy**에서 대상 Route를 선택합니다.
+2. Sample/Observed Schema에 존재하는 `api_key` 필드를 선택합니다.
+3. 필요한 보호 동작을 지정하고 이벤트 수준 **Delivery Behavior = Quarantine**으로 설정합니다.
+4. 규칙을 명시적으로 저장하고 Effective 설정 및 경고를 확인합니다.
+5. 아래 이벤트를 전송합니다.
+
+```json
+{"id":"quarantine-001","api_key":"demo-not-a-secret","reason":"hold for review"}
+```
+
+## 2. 격리 기록 확인
+
+1. **Governance → Quarantine** (`/governance/quarantine`)으로 이동합니다.
+2. **24h / 7d / 30d** 기간과 Status/Severity 필터에서 격리 이벤트를 찾습니다.
+3. 이벤트를 선택하여 Investigation Detail의 ID, Stream, Route, 사유, 상태, 관련 기록을 확인합니다.
+4. **Logs**에서도 정책 적용 결과를 확인합니다. **Quarantined 상태를 전송 성공으로 기록하면 안 됩니다.**
+
+## 3. 처리 방법 선택
+
+| 버튼 | 사용 상황 | 성공 확인 |
+| --- | --- | --- |
+| **Release** | 검토 후 전송 허용 | Released 상태, Checkpoint 영향, 필요 시 전송 증빙 |
+| **Discard** | 전달을 금지해야 함 | Discarded 상태, 수신기 미도착 |
+| **Replay** | 재처리 승인·중복 처리 대책이 있음 | Replay 결과, 실제 Destination 수신 확인 |
+
+1. 계정에 표시된 허가된 작업을 선택합니다.
+2. 확인 대화상자의 영향을 읽습니다. **Release는 Stream Checkpoint를 진행시킬 수 있습니다.**
+3. 한 번만 승인하고 Status, Audit 기록, 연결된 Replay 정보를 기록합니다.
+4. Replay를 요청했더라도 실제 수신 성공까지 Logs와 Destination을 별도로 확인합니다.
+
+<Warning>
+Release와 Replay는 실제 전달 상태를 변경하거나 이미 전송된 이벤트를 중복 전달할 수 있습니다. 실습은 고유한 가상 ID로만 수행하고 실제 데이터는 조직 승인 절차를 따릅니다.
+</Warning>
+
+## 완료 조건
+
+**격리된 이벤트 1건과 정책 사유**, **허가된 조치의 결과**, **해당하는 경우 실제 전송 증거**가 각각 일치해야 합니다. 권한 오류가 발생하면 이를 기록하고 우회하지 않습니다.
+
+## 실패 시
+
+- 격리 기록 없음: 필드 매칭, 유효한 Policy, Stream 실행, 기간 필터 확인
+- 버튼 비활성/403: 사용자 권한 확인. RBAC를 우회하지 않습니다.
+- Replay 기록만 존재: Destination과 실제 전달 결과를 독립 확인
+- 중복 우려: Event ID와 과거 전송 기록을 비교한 후 추가 조치 결정
+
+**관련:** [Governance](/ko/governance/overview), [전송 장애 대응](/ko/use-cases/delivery-incident).

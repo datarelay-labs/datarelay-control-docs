@@ -1,0 +1,70 @@
+---
+title: "Recover from a Delivery Failure"
+description: "Use a controlled HTTP 503, inspect Route evidence, and prove recovery without losing sight of checkpoint semantics."
+---
+
+# Recover from a Delivery Failure
+
+**Goal:** reproduce an isolated Destination error, locate its cause in Control, restore the receiver, and verify new successful delivery.
+
+## Starting state
+
+Complete [Webhook → first delivered event](/use-cases/webhook-first-flow). The test receiver on port **9011** must have already returned HTTP 200 and recorded a successful event. Do not perform fault injection against a production Destination.
+
+## 1. Reproduce a receiver-side error
+
+1. Stop the test HTTP receiver (`Ctrl+C`).
+2. Restart in intentional failure mode:
+
+```bash
+python3 scenario_receiver.py --port 9011 --status 503 --output received-9011.ndjson
+```
+
+3. Send a new unique event into the same Control Webhook Receiver:
+
+```bash
+curl --fail-with-body -X POST "$CONTROL_RECEIVER_URL" \
+  -H 'Content-Type: application/json' \
+  --data '{"id":"delivery-fail-001","message":"controlled failure test"}'
+```
+
+The **ingest** request may succeed even if downstream **delivery** fails. Do not equate the two.
+
+## 2. Locate the affected Route
+
+1. Open **Dashboard** and look for an abnormal delivery state.
+2. Drill into **Data Flows / Routes** (`/routes`) and find the Stream's Destination/Route.
+3. Open **Logs** (`/logs`), filter by Stream, Route, time range, and failure status.
+4. Open the detail of a failed attempt. Record the run ID, route ID, stage, HTTP 503/result, retry/failure policy, and latest failure time.
+5. If available, inspect the Stream runtime/checkpoint view for pending work. Do not assume checkpoint advanced merely because ingestion succeeded.
+
+## 3. Restore the service
+
+1. Stop the failing test receiver.
+2. Start it again with a successful response:
+
+```bash
+python3 scenario_receiver.py --port 9011 --status 200 --output received-9011.ndjson
+```
+
+3. Send another unique event (`delivery-recovered-001`).
+4. Verify this event appears in `received-9011.ndjson` and has matching successful Route delivery evidence.
+
+## 4. Decide what to do with the failed event
+
+Inspect the recorded delivery failure and configured retry/queue behavior. If it was automatically retried and delivered, do **not** replay it again. If a replay control is available and authorized, use it only after confirming duplicate handling with the receiving system.
+
+A failover Destination may be configured through Route Delivery settings where supported, but a single recovered receiver does **not** prove automatic failover. Test both routes independently if you need failover acceptance.
+
+## Completion check
+
+**PASS =** observed failed attempt with explicit reason, receiver recovery, successful new event in independent sink and Logs. Failed-event recovery is separately classified as delivered, queued, dropped, or unresolved based on actual evidence.
+
+## If it fails
+
+- **No failure logged:** check whether the Stream/Route was running and whether a retry masked the failure.
+- **No new receipt after recovery:** confirm correct Destination URL, current Route enabled status, port/firewall and receiver output.
+- **Unexpected success state:** compare the exact run/event IDs; avoid using aggregate dashboard metrics as per-event proof.
+- **Analytics deep link loses filter:** current development E2E recorded a redirect to the generic Dashboard; use explicit Logs filters instead ([issue #413](https://github.com/datarelay-labs/datarelay-control/issues/413)).
+
+**Related:** [Logs and exports](/use-cases/logs-audit).

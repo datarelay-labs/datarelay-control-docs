@@ -1,0 +1,65 @@
+---
+title: "Collect Events from PostgreSQL"
+description: "Configure a read-only database Connector, query events, and verify end-to-end delivery."
+---
+
+# Collect Events from PostgreSQL
+
+**Goal:** use the implemented **Database query (PostgreSQL)** Connector to read a controlled table and send events to an HTTP Destination. This requires a test PostgreSQL database owned by you.
+
+## 1. Prepare the test table
+
+Run the following SQL in an authorized **test** PostgreSQL database using an administrator account:
+
+```sql
+CREATE TABLE IF NOT EXISTS control_tutorial_events (
+    id bigint PRIMARY KEY,
+    occurred_at timestamptz NOT NULL,
+    message text NOT NULL
+);
+INSERT INTO control_tutorial_events(id, occurred_at, message)
+VALUES (101, '2026-10-18T00:00:00Z', 'synthetic db event')
+ON CONFLICT (id) DO NOTHING;
+```
+
+Provision a separate read-only database user with `SELECT` on that table. Configure network access from Control to PostgreSQL; do not use a production write-enabled account.
+
+## 2. Configure the Connector
+
+1. Open **Connectors → Create Connector**, select **Database query (PostgreSQL)**.
+2. Enter **Connector Name** = `Lab PostgreSQL`, **DB type** = `PostgreSQL`.
+3. Set actual **Host**, **Port** (typically 5432), **Database name**, **Username**, and **Password**; choose your server's correct **SSL mode** (e.g. `VERIFY_FULL` with a valid certificate).
+4. Save and execute the supported database connectivity test. Confirm `SELECT` permission and TLS.
+
+## 3. Select and test the query
+
+1. Open `/streams/new`, choose the saved Connector.
+2. Use the database discovery/query builder supported by **Connect** and **Run Test**. Use a read-only query like:
+
+```sql
+SELECT id, occurred_at, message
+FROM control_tutorial_events
+ORDER BY occurred_at, id
+```
+
+3. Confirm the query actually returns the synthetic row. Set **Record Selection** to the returned record set.
+4. Review column types and checkpoint strategy. If incremental mode is required, use the documented stable cursor/tie-breaker field; the sample timestamp alone is not sufficient evidence of monotonicity or uniqueness.
+5. Confirm Union Schema and mapped event output.
+
+## 4. Deploy and verify
+
+1. Choose the [lab HTTP sink](/use-cases/lab-setup) as a `WEBHOOK_POST` Destination.
+2. In **Route Processing**, review the field mapping/output preview.
+3. **Deploy**, start the Stream if needed, and inspect **Logs** and the sink's `received-9011.ndjson`.
+4. Add an additional synthetic test row with a greater ID/timestamp using your authorized database account; verify collection behavior and absence of unexpected duplicates.
+
+**PASS:** the authorized read-only query returns the expected row, a Route delivery is recorded, and the sink contains the corresponding event.
+
+## If it fails
+
+- Authentication: check DB host/port/SSL/readonly account.
+- Query yields zero rows: inspect database/schema/table selection and timestamp filters.
+- Duplicate or omitted rows: inspect event ordering, incremental checkpoint and tie-breaker.
+- Database supports something other than PostgreSQL: the documented runtime is PostgreSQL-centric; **do not claim another engine is supported without source/fixture proof**.
+
+**Related:** [HTTP API polling](/use-cases/http-api), [Schema drift](/use-cases/schema-change).

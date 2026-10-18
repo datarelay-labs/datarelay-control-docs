@@ -1,0 +1,43 @@
+---
+title: "Collect Files over SFTP"
+description: "Configure secure remote-file polling and verify events extracted from a remote JSONL file."
+---
+
+# Collect Files over SFTP
+
+**Goal:** collect events from a test file on an SSH/SFTP server. SFTP-compatible SCP mode is a specific supported option; it is **not** arbitrary legacy SCP directory polling.
+
+## 1. Prepare the remote host
+
+1. On a dedicated test SSH server, create an allowed directory such as `/srv/control-demo` and place `events.jsonl` containing:
+```json
+{"id":"sftp-001","message":"remote file record","severity":"low"}
+```
+2. Create a least-privilege read-only SSH user. Confirm the account can list and read the file using your normal `sftp` client.
+3. Record the trusted server SSH host key fingerprint. Do **not** disable host verification to make a test pass.
+
+## 2. Configure Remote File Connector
+
+1. Choose **Connectors → Create Connector → Remote file polling (SFTP / SFTP-compatible SCP mode)**.
+2. Set **Connector Name** = `Lab SFTP`, **Protocol** = `sftp`.
+3. Fill in the remote **Host**, **Port** (usually 22), and **Username**.
+4. Provide a permitted **Password or Private key** as supported by the form. Configure the server identity through **known-hosts** using the trusted fingerprint; choose the **strict** host-key verification policy.
+5. Configure remote directory/file selection (and file pattern where offered) for `/srv/control-demo/events.jsonl`. Save, then run the supported remote connectivity/list test.
+
+## 3. Test records and deliver
+
+1. Create a Stream in `/streams/new`, choose `Lab SFTP`, and **Run Test**.
+2. Verify a parsed record with `id=sftp-001`; use **Record Selection** to confirm the event structure.
+3. Choose the [test Destination](/use-cases/lab-setup), review Route Processing and Deploy settings, and start the Stream.
+4. In **Logs**, correlate the run with the independent Destination receipt.
+
+**PASS:** SFTP listing/read succeeds, a sample record is extracted, and an independent receiver contains the corresponding event.
+
+## If it fails
+
+- Host verification error: fix the recorded host key and trust chain. Never switch to insecure verification to make production pass.
+- Permission denied: verify the SSH account's file/directory permissions.
+- No extracted records: inspect remote file encoding/format and Record Selection.
+- Duplicate records: inspect source checkpoint/position and file rotation strategy.
+
+**Related:** [S3 collection](/use-cases/s3-object-collection), [Delivery incident](/use-cases/delivery-incident).

@@ -1,0 +1,45 @@
+---
+title: "Daily Operations Checklist"
+description: "A repeatable operator workflow for dashboard health, Stream/Route drilldown, and evidence collection."
+---
+
+# Daily Data Flow Operations
+
+**Goal:** assess whether critical business data is arriving and being delivered, and identify exactly which Stream/Route requires attention.
+
+## Before your shift
+
+Know the Stream groups/products you own and the expected incoming event volume/period. Use a Viewer account for observation where possible; edit/Replay actions require authorized roles.
+
+## 1. Review fleet status
+
+1. Open **Dashboard** (`/monitoring`).
+2. Record the time window and the overall state: Healthy/Warning/Critical, incoming and outgoing events, and delivery success rate where available.
+3. Investigate Streams with no data or low volume. Interpret a zero count against the expected source schedule — quiet sources may be normal.
+4. Examine capacity or schema warning indicators, but do not assume aggregated dashboard indicators prove the cause.
+
+## 2. Drill down to one affected Stream
+
+1. Open **Streams** (`/streams`) and select the relevant product/source group.
+2. Find the Stream with abnormal volume or errors; open its runtime/detail view.
+3. Confirm Source collection, last run, event extraction, Checkpoint, and current Stream enabled state.
+4. Open **Data Flows / Routes** (`/routes`) for the Stream; identify whether a specific Route or Destination is degraded.
+
+## 3. Gather per-Route evidence
+
+1. Open **Logs** (`/logs`) and filter by the exact Stream and Route, time window, stage, and status.
+2. Open a failed or suspicious row to record ID, timestamp, cause, and downstream Destination.
+3. If delivery failed, follow [Delivery incident response](/use-cases/delivery-incident). If the event was held by policy, follow [Quarantine review](/use-cases/quarantine-replay).
+4. Save a local search and export loaded matching rows using [Logs & exports](/use-cases/logs-audit) if formal incident evidence is required.
+
+## 4. Confirm the fix
+
+When an authorized corrective action is taken, trigger or observe a **new** run, compare its exact event/Route identifiers and independent receiver state, and verify any expected Checkpoint effect. Do not interpret a green dashboard alone as proof that the original failed event recovered.
+
+## Completion record
+
+Record: date/time window, Stream group, affected Stream/Route/Destination, error evidence, corrective action, exact run IDs, subsequent receiver proof, unresolved issues and next owner.
+
+**PASS:** every flagged critical data flow has a verified healthy state or a documented, owned incident with supporting Logs. Do not silence/disable alerts merely to make a dashboard green.
+
+**Related:** [Logs evidence](/use-cases/logs-audit), [Schema changes](/use-cases/schema-change), [Route processing](/processing/route-processing).
