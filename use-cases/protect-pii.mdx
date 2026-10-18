@@ -70,3 +70,11 @@ Audit Only preserves the original value. Do not use it for real regulated person
 - `409 STREAM_STALE_WRITE` during staged Save: this is a known, reproduced development issue in [Control #413](https://github.com/datarelay-labs/datarelay-control/issues/413); preserve the draft, avoid claiming it persisted, and use the verified Route editor only where that operation succeeds.
 
 **Related:** [Schema changes](/use-cases/schema-change), [Governance](/governance/overview).
+
+## Additional UI walkthrough captures — historical tests
+
+These are historical Playwright test captures from Control, not proof of live connector/delivery success. Verify controls against your currently deployed version.
+
+![Control UI test capture: transform-step-screenshot.png](/images/screenshots/verified/transform-step-screenshot.png)
+
+![Control UI test capture: 05-before-confirmation.png](/images/screenshots/verified/05-before-confirmation.png)
